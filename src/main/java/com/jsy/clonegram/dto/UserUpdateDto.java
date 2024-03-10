@@ -2,6 +2,9 @@ package com.jsy.clonegram.dto;
 
 import lombok.Data;
 
+/**
+ * User Update를 위한 DTO
+ */
 @Data
 public class UserUpdateDto {
     private String Email;

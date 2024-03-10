@@ -6,7 +6,9 @@ import com.jsy.clonegram.dto.UserUpdateDto;
 import java.util.Optional;
 import java.util.OptionalInt;
 
-
+/**
+ * User단에서 필요한 데이터를 REpository와 이어주는 인터페이스
+ */
 public interface UserRepository {
     void save(User user);
 

@@ -9,6 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * User의 비즈니스 로직을 담음
+ * createUser 는 user의 password의 encoding 과정이 필요하여 encode를 비밀번호로 만듦.
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -23,7 +27,6 @@ public class UserService {
     public Boolean createUser(User user){
         String encode = encoder.encode(user.getPassword());
         user.setPassword(encode);
-        user.setEmail(user.getEmail());
 
         rep.save(user);
 

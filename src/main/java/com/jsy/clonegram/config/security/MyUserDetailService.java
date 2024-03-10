@@ -12,6 +12,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+/**
+ * UserDetailsService로 username을 repository에서 불러와 userdetails를 빌드함
+ * UserDetails는 세션에 저장되어 인증 정보로 사용됨.
+ */
 @Component
 @Slf4j
 @RequiredArgsConstructor

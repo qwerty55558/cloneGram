@@ -1,4 +1,4 @@
-package com.jsy.clonegram.config.mybatis;
+package com.jsy.clonegram.config;
 
 import com.jsy.clonegram.mybatis.mapper.UserMapper;
 import com.jsy.clonegram.repository.MariadbRepository;
@@ -8,9 +8,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * User 단에서 사용되는 클래스들을 Bean 등록 시킴
+ */
 @Configuration
 @RequiredArgsConstructor
-public class MyBatisConfig {
+public class UserConfig {
 
     private final UserMapper userMapper;
 

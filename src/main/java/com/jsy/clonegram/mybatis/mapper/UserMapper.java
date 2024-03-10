@@ -7,6 +7,9 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.Optional;
 
+/**
+ * MyBatis 사용을 위한 userMapper
+ */
 @Mapper
 public interface UserMapper {
     void save(User user);

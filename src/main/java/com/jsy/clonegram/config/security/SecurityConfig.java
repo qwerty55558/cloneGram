@@ -13,6 +13,9 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+/**
+ * SpringSecurity의 Config
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity

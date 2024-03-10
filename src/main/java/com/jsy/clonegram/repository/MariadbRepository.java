@@ -8,6 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
+/**
+ * UserRepsitory를 상속받아 다형성을 유지함
+ * 하지만 MyBatis의 UserMapper에 종속되어있음
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class MariadbRepository implements UserRepository {

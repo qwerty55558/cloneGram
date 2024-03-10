@@ -2,6 +2,9 @@ package com.jsy.clonegram.dao;
 
 import lombok.Data;
 
+/**
+ * User 데이터
+ */
 @Data
 public class User {
     private Long Id;
