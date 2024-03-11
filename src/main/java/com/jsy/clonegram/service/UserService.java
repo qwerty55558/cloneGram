@@ -1,7 +1,9 @@
 package com.jsy.clonegram.service;
 
 import com.jsy.clonegram.config.security.SecurityConfig;
+import com.jsy.clonegram.dao.Grade;
 import com.jsy.clonegram.dao.User;
+import com.jsy.clonegram.dto.UserUpdateDto;
 import com.jsy.clonegram.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +29,18 @@ public class UserService {
     public Boolean createUser(User user){
         String encode = encoder.encode(user.getPassword());
         user.setPassword(encode);
+        user.setGrade(Grade.Bronze);
 
         rep.save(user);
 
         return true;
     }
+
+    public Boolean updateUser(User user, UserUpdateDto dto) {
+        dto.setTargetId(user.getId());
+        rep.update(dto);
+        return true;
+    }
+
+
 }

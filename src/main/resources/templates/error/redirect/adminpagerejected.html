@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Error Page</title>
+
+</head>
+<body>
+<script th:inline="javascript">
+    window.onload = function() {
+        let nextPage = [[${nextPage}]]
+        let msg = [[${msg}]];
+
+        alert(msg);
+        location.href = nextPage;
+    }
+</script>
+
+
+</body>
+</html>

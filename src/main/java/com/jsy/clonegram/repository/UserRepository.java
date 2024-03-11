@@ -1,8 +1,11 @@
 package com.jsy.clonegram.repository;
 
+import com.jsy.clonegram.dao.Grade;
 import com.jsy.clonegram.dao.User;
 import com.jsy.clonegram.dto.UserUpdateDto;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
 
@@ -14,9 +17,11 @@ public interface UserRepository {
 
     Optional<User> findById(Long id);
 
-    User update(User user, UserUpdateDto updateDto);
+    void update(UserUpdateDto updateDto);
 
     Integer delete(Long userId);
 
     Optional<User> findByName(String username);
+
+    List<User> findAll();
 }

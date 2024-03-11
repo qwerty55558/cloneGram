@@ -1,11 +1,13 @@
 package com.jsy.clonegram.repository;
 
+import com.jsy.clonegram.dao.Grade;
 import com.jsy.clonegram.dao.User;
 import com.jsy.clonegram.dto.UserUpdateDto;
 import com.jsy.clonegram.mybatis.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -29,8 +31,8 @@ public class MariadbRepository implements UserRepository {
     }
 
     @Override
-    public User update(User user, UserUpdateDto updateDto) {
-        return userMapper.updateUser(user, updateDto);
+    public void update(UserUpdateDto updateDto) {
+        userMapper.updateUser(updateDto);
     }
 
     @Override
@@ -41,5 +43,10 @@ public class MariadbRepository implements UserRepository {
     @Override
     public Optional<User> findByName(String username) {
         return userMapper.findByName(username);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userMapper.findAll();
     }
 }

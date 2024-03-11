@@ -14,6 +14,7 @@ public class User {
     private String fullName;
     private String bio;
     private String profileImageUrl;
+    private Grade grade;
 
     public User(String id, String pw) {
         this.userName = id;
