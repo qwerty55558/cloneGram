@@ -20,3 +20,4 @@ Spring Boot를 관계형 데이터 베이스와 연동하여 프로젝트를 진
 ## 🗒️Record
 1. [CloneGram 토이프로젝트](https://velog.io/@qwerty55558/CloneGram-Project-cympbvsd) (Readme.md와 같은 내용)
 2. [CloneGram 토이프로젝트 - 02](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-02)
+3. [CloneGram 토이프로젝트 - 03](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-03)
