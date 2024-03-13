@@ -15,9 +15,9 @@
     </resultMap>
 
 
-    <insert id="save" parameterType="User">
-        insert into user (username, password, email, full_name, bio, profile_image_url, grade)
-        values (#{userName}, #{password}, #{Email}, #{fullName}, #{bio}, #{profileImageUrl}, #{grade.code});
+    <insert id="save" parameterType="UserCreateDto">
+        insert into user (username, password, email, grade)
+        values (#{userName}, #{password}, #{Email}, #{grade.code});
     </insert>
     
     <select id="findById" resultMap="userMap">

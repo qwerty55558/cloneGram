@@ -20,7 +20,7 @@ public class AccessRejectedHandler implements AccessDeniedHandler {
         String requestURI = request.getRequestURI();
 
         if (requestURI.contains("/dashboard")) {
-            request.setAttribute("msg", "접근 불가능한 페이지입니다.");
+//            request.setAttribute("msg", "접근 불가능한 페이지입니다."); // 데이터를 보내지 않고 messageSource를 사용해 메시지 출력  
             request.setAttribute("nextPage", "/");
             request.getRequestDispatcher("/error/redirect").forward(request, response);
         }

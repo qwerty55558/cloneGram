@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                        .requestMatchers("/status", "/images/**", "sign/**").permitAll()
+                        .requestMatchers("/status", "/images/**", "sign/**", "/sendEmail", "/checkCode","/validation/**").permitAll()
                         .requestMatchers("/dashboard/**").hasRole(Grade.Admin.getCode()) // dashboard가 포함된 URI에서는 role 요건이 충족되어야 접속 가능
                         .anyRequest().authenticated()    // 어떠한 요청이라도 인증필요
                 )
@@ -52,6 +52,7 @@ public class SecurityConfig {
                         .usernameParameter("id")    // [C] submit할 아이디
                         .passwordParameter("pw")    // [D] submit할 비밀번호
                         .defaultSuccessUrl("/home", true)
+                        .failureUrl("/login?error")
                         .permitAll()
                 )
                 .logout(withDefaults());    // 로그아웃은 기본설정으로 (/logout으로 인증해제)

@@ -8,13 +8,24 @@
 </head>
 <body>
 <script th:inline="javascript">
-    window.onload = function() {
-        let nextPage = [[${nextPage}]]
-        let msg = [[${msg}]];
+    // window.onload = function() {
+    //     let nextPage = [[${nextPage}]]
+    //     let msg = [[${msg}]];
+    //
+    //     alert(msg);
+    //     location.href = nextPage;
+    // }
 
-        alert(msg);
+    window.onload = function (){
+        /*<![CDATA[*/
+        let message = /*[[#{messages.msg.rejectPage}]]*/ 'Default Message';
+        let nextPage = [[${nextPage}]]
+
+        alert(message);
         location.href = nextPage;
+        /*]]>*/
     }
+
 </script>
 
 

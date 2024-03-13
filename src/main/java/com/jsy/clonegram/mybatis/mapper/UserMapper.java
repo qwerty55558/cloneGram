@@ -2,6 +2,7 @@ package com.jsy.clonegram.mybatis.mapper;
 
 import com.jsy.clonegram.dao.Grade;
 import com.jsy.clonegram.dao.User;
+import com.jsy.clonegram.dto.UserCreateDto;
 import com.jsy.clonegram.dto.UserUpdateDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -14,7 +15,7 @@ import java.util.Optional;
  */
 @Mapper
 public interface UserMapper {
-    void save(User user);
+    void save(UserCreateDto user);
     Optional<User> findById(@Param("id") Long id);
 
     void updateUser(UserUpdateDto updateDto);

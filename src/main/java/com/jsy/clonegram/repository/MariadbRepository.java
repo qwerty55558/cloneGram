@@ -2,6 +2,7 @@ package com.jsy.clonegram.repository;
 
 import com.jsy.clonegram.dao.Grade;
 import com.jsy.clonegram.dao.User;
+import com.jsy.clonegram.dto.UserCreateDto;
 import com.jsy.clonegram.dto.UserUpdateDto;
 import com.jsy.clonegram.mybatis.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class MariadbRepository implements UserRepository {
     private final UserMapper userMapper;
 
     @Override
-    public void save(User user) {
+    public void save(UserCreateDto user) {
         userMapper.save(user);
     }
 

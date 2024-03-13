@@ -1,8 +1,9 @@
-package com.jsy.clonegram.config;
+package com.jsy.clonegram.config.user;
 
 import com.jsy.clonegram.mybatis.mapper.UserMapper;
 import com.jsy.clonegram.repository.MariadbRepository;
 import com.jsy.clonegram.repository.UserRepository;
+import com.jsy.clonegram.service.EmailService;
 import com.jsy.clonegram.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

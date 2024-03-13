@@ -2,6 +2,7 @@ package com.jsy.clonegram.repository;
 
 import com.jsy.clonegram.dao.Grade;
 import com.jsy.clonegram.dao.User;
+import com.jsy.clonegram.dto.UserCreateDto;
 import com.jsy.clonegram.dto.UserUpdateDto;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,7 +14,7 @@ import java.util.OptionalInt;
  * User단에서 필요한 데이터를 REpository와 이어주는 인터페이스
  */
 public interface UserRepository {
-    void save(User user);
+    void save(UserCreateDto user);
 
     Optional<User> findById(Long id);
 

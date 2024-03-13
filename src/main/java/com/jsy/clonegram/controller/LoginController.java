@@ -1,16 +1,25 @@
 package com.jsy.clonegram.controller;
 
 import com.jsy.clonegram.dao.User;
+import com.jsy.clonegram.dto.UserCreateDto;
 import com.jsy.clonegram.repository.MariadbRepository;
+import com.jsy.clonegram.service.EmailService;
+import com.jsy.clonegram.service.RedisService;
 import com.jsy.clonegram.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * getmapping login, sign은 model에 빈 user객체를 넣어서 thymeleaf에서 편하게 자동완성 사용
@@ -23,6 +32,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class LoginController {
 
     private final UserService service;
+    private final RedisService redisService;
 
     @GetMapping("login")
     public String loginPage(Model model) {
@@ -32,12 +42,33 @@ public class LoginController {
 
     @GetMapping("sign")
     public String signPage(Model model) {
-        model.addAttribute("user", new User());
+        model.addAttribute("user", new UserCreateDto());
         return "sign/sign";
     }
 
     @PostMapping("sign")
-    public String createUser(@ModelAttribute(value = "user") User user) {
+    public String createUser(@Valid @ModelAttribute(value = "user") UserCreateDto user, BindingResult br, Model model) {
+
+        Map<String, String> errors = new HashMap<>();
+
+        if (redisService.getEmailAuthStatus(user.getEmail()) == null) {
+            errors.put("EmailAuthError", "이메일 인증 오류입니다.");
+        }
+
+        if (!redisService.getDuplicationCheckId(user.getUserName()).equals("success")) {
+            errors.put("IdAuthError", "Id 중복 에러입니다.");
+        }
+
+        if (br.hasErrors()) {
+//            log.info("error = {}", br);
+            return "sign/sign";
+        }
+        if (!errors.isEmpty()) {
+            model.addAttribute("error", errors);
+            return "sign/sign";
+        }
+
+
         service.createUser(user);
         return "redirect:/login";
     }
