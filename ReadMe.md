@@ -8,13 +8,17 @@ Spring Boot를 관계형 데이터 베이스와 연동하여 프로젝트를 진
 
 ## ⚙️Tech Stack
 ### Backend
-* Java 21
-* SpringBoot 3.2.3
-* Spring Security
-* MariaDB
+* **Java 21**
+* **SpringBoot 3.2.3**
+* **Spring Security** - Authentication
+* **MariaDB** - UserData
+* **Redis** - TempData (마킹)
+* **MyBatis** - DataBinding
+* **Cloudinary** - ImageHosting
 ### Frontend
-* ThymeLeaf
-* javascript
+* **ThymeLeaf** - TemplateEngine
+* **javascript** - Script
+* **Jquery** - ScriptLibrary
 
 
 ## 🗒️Record
@@ -22,3 +26,4 @@ Spring Boot를 관계형 데이터 베이스와 연동하여 프로젝트를 진
 2. [CloneGram 토이프로젝트 - 02](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-02)
 3. [CloneGram 토이프로젝트 - 03](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-03)
 4. [CloneGram 토이프로젝트 - 04](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-04)
+5. [CloneGram 토이프로젝트 - 05](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-05)
