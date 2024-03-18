@@ -2,6 +2,7 @@ package com.jsy.clonegram.controller;
 
 import com.jsy.clonegram.dao.User;
 import com.jsy.clonegram.repository.UserRepository;
+import com.jsy.clonegram.service.UserPictureService;
 import com.jsy.clonegram.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +26,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class HomeController {
 
-    private final UserService service;
     private final UserRepository rep;
+    private final UserPictureService pic;
 
     @GetMapping({"/","/home"})
     public String homeController(Model model) {
@@ -35,7 +36,10 @@ public class HomeController {
 
         Optional<User> byName = rep.findByName(username);
 
+        String pictureUrl = pic.getPictureUrl();
+
         model.addAttribute("user", byName.get());
+        model.addAttribute("picurl", pictureUrl);
         return "home";
     }
 

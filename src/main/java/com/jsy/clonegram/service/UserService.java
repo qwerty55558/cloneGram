@@ -1,6 +1,5 @@
 package com.jsy.clonegram.service;
 
-import com.jsy.clonegram.config.security.SecurityConfig;
 import com.jsy.clonegram.dao.Grade;
 import com.jsy.clonegram.dao.User;
 import com.jsy.clonegram.dto.UserCreateDto;
@@ -9,8 +8,13 @@ import com.jsy.clonegram.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.security.Principal;
+import java.util.Optional;
 
 /**
  * User의 비즈니스 로직을 담음
@@ -28,13 +32,19 @@ public class UserService {
 
 
     public Boolean createUser(UserCreateDto user){
-        String encode = encoder.encode(user.getPassword());
-        user.setPassword(encode);
-        user.setGrade(Grade.Bronze);
 
-        rep.save(user);
+        Optional<User> byName = rep.findByName(user.getUserName());
+        if (byName.isEmpty()) {
+            String encode = encoder.encode(user.getPassword());
+            user.setPassword(encode);
+            user.setGrade(Grade.Bronze);
 
-        return true;
+            rep.save(user);
+
+            return true;
+        }
+
+        return false;
     }
 
     public Boolean updateUser(User user, UserUpdateDto dto) {
@@ -43,5 +53,8 @@ public class UserService {
         return true;
     }
 
-
+    public String getUsernameOnSession(){
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getUsername();
+    }
 }

@@ -69,8 +69,15 @@ public class LoginController {
         }
 
 
-        service.createUser(user);
-        return "redirect:/login";
+        Boolean availableUserCheck = service.createUser(user);
+
+        if (availableUserCheck) {
+            return "redirect:/login";
+        }else {
+            errors.put("IdAuthError", "Id 중복 에러입니다.");
+            model.addAttribute("error",errors);
+            return "sign/sign";
+        }
     }
 
     @GetMapping("logout")
