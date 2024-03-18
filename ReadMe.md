@@ -19,6 +19,8 @@ Spring Boot를 관계형 데이터 베이스와 연동하여 프로젝트를 진
 * **ThymeLeaf** - TemplateEngine
 * **javascript** - Script
 * **Jquery** - ScriptLibrary
+### VCS
+* **Git**
 
 
 ## 🗒️Record
