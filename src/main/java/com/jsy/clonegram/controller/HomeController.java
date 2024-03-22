@@ -1,19 +1,20 @@
 package com.jsy.clonegram.controller;
 
+import com.jsy.clonegram.dao.Post;
 import com.jsy.clonegram.dao.User;
+import com.jsy.clonegram.dto.PicUrlDto;
+import com.jsy.clonegram.repository.PostRepository;
 import com.jsy.clonegram.repository.UserRepository;
 import com.jsy.clonegram.service.UserPictureService;
-import com.jsy.clonegram.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -26,21 +27,30 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class HomeController {
 
-    private final UserRepository rep;
+    private final UserRepository userRepository;
     private final UserPictureService pic;
+    private final PostRepository postRepository;
 
     @GetMapping({"/","/home"})
     public String homeController(Model model) {
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = principal.getUsername();
+        Optional<User> byName = userRepository.findByName(username);
 
-        Optional<User> byName = rep.findByName(username);
+        List<Post> postsById = postRepository.findPostsById(byName.get().getId());
 
-        String pictureUrl = pic.getPictureUrl();
+        PicUrlDto picUrlDto = new PicUrlDto();
+        picUrlDto.setMiniPic(pic.getMiniPicUrl());
+        picUrlDto.setProfilePic(pic.getProfilePicUrl());
 
-        model.addAttribute("user", byName.get());
-        model.addAttribute("picurl", pictureUrl);
-        return "home";
+        if (byName.isPresent()) {
+            model.addAttribute("user", byName.get());
+            model.addAttribute("picurl", picUrlDto);
+            model.addAttribute("posts", postsById);
+            return "home";
+        }
+
+        return "redirect:/login";
     }
 
 

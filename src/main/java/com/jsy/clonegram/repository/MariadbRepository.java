@@ -5,6 +5,7 @@ import com.jsy.clonegram.dao.User;
 import com.jsy.clonegram.dto.UserCreateDto;
 import com.jsy.clonegram.dto.UserUpdateDto;
 import com.jsy.clonegram.mybatis.mapper.UserMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,6 +18,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class MariadbRepository implements UserRepository {
 
     private final UserMapper userMapper;

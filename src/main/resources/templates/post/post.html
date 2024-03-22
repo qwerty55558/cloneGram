@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home</title>
+    <th:block th:replace="~{home::header}"></th:block>
+    <style>
+        .mainpanel{
+            background: black;
+            color: white;
+        }
+        .main-content-center{
+            background: black;
+            color: white;
+            width: 100%;
+            overflow-y: auto;
+
+            display: flex; /* Flexbox 레이아웃 사용 */
+            justify-content: center; /* 수평 가운데 정렬 */
+            align-items: flex-start ; /* 수직 가운데 정렬 */
+            height: 100vh; /* 화면 전체 높이를 차지하도록 설정 */
+        }
+        .main-content-center::-webkit-scrollbar {
+            display: none;
+        }
+        .card-header{
+            background: darkslategray;
+            color: white;
+        }
+        .card-body{
+            background: black;
+            color: white;
+        }
+        .card-footer{
+            background: black;
+            color: white;
+            border-top: darkslategray;
+            border-style: solid;
+            border-width: 1px;
+        }
+        .imgpanel{
+            width: 500px;
+            height: 500px;
+        }
+        @media (max-width: 800px) {
+            .imgpanel{
+                width: 300px;
+                height: 300px;
+            }
+        }
+        @media (max-width: 600px) {
+            .fa-arrow-left{
+                font-size: large;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- html data -->
+<section class="vh-100 d-flex justify-content-between mainpanel">
+    <div class="side-left"><a href="/home?tap=profile" style="text-decoration: none;color: inherit"><i class="fa-solid fa-arrow-left fa-3x my-3 mx-3"></i></a></div>
+    <div class="main-content-center">
+        <div class="card text-center mt-5" style="max-width: 630px">
+            <div class="card-header text-start">
+                <img th:src="${propic}" style="border-radius: 70%;">
+                <span th:text="${postcreator}"></span>
+            </div>
+            <div class="card-body">
+                <img th:src="${post.getImageUrl()}" class="mx-5 my-3 imgpanel">
+                <p class="card-text text-start" style="word-wrap: break-word"><span class="me-2" th:text="${postcreator}"style="font-weight: bold;"></span><span th:text="${post.getCaption()}"></span></p>
+            </div>
+            <div class="card-footer text-start">
+                <div id="editor" style="width: 100%;height: fit-content"></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+    <div class="side-right" style="width: 30px"></div>
+</section>
+<!-- html data-->
+<th:block th:replace="~{home::footer}"></th:block>
+<script th:inline="javascript">
+    let quill;
+    $(document).ready(function (){
+        quill = new Quill('#editor');
+    })
+</script>
+</body>
+</html>

@@ -47,12 +47,16 @@ public class RedisService {
         return redisTemplate.opsForValue().get(id);
     }
 
-    public void setVersion(String version, String username){
-        redisTemplate.opsForValue().set(username+"_pic",version);
+    public void setVersion(String version, String name){
+        redisTemplate.opsForValue().set(name+"_pic",version);
     }
 
     public String getVersion(String username){
         return redisTemplate.opsForValue().get(username + "_pic");
+    }
+
+    public String getPostVersion(Long postId) {
+        return redisTemplate.opsForValue().get("postId_" + postId);
     }
 
     public void deleteRecordByInfo(String Info){

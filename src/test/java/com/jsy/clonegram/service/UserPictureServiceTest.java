@@ -1,17 +1,12 @@
 package com.jsy.clonegram.service;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.Search;
 import com.cloudinary.api.ApiResponse;
 import com.cloudinary.utils.ObjectUtils;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Map;
 
 @SpringBootTest
 @Slf4j
@@ -27,8 +22,9 @@ class UserPictureServiceTest {
 
     @Test
     void getPictureUrl() {
-        String pictureUrl = pictureService.getPictureUrl();
-        log.info("url = {}",pictureUrl);
+//        String pictureUrl = pictureService.getMiniPicUrl();
+        String profilePicUrl = pictureService.getProfilePicUrl();
+        log.info("url = {}",profilePicUrl);
     }
 
     @Test
