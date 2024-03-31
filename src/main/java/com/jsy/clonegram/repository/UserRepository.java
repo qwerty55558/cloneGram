@@ -1,5 +1,6 @@
 package com.jsy.clonegram.repository;
 
+import com.jsy.clonegram.dao.Follow;
 import com.jsy.clonegram.dao.Grade;
 import com.jsy.clonegram.dao.User;
 import com.jsy.clonegram.dto.UserCreateDto;
@@ -25,4 +26,13 @@ public interface UserRepository {
     Optional<User> findByName(String username);
 
     List<User> findAll();
+
+    List<Follow> findFollowersByUserId(Long userId);
+
+    List<Follow> findFollowingsByUserId(Long userId);
+
+    void followUser(Follow follow);
+
+    void unfollowUser(Follow follow);
+
 }

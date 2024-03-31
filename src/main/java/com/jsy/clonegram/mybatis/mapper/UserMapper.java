@@ -1,11 +1,13 @@
 package com.jsy.clonegram.mybatis.mapper;
 
+import com.jsy.clonegram.dao.Follow;
 import com.jsy.clonegram.dao.Grade;
 import com.jsy.clonegram.dao.User;
 import com.jsy.clonegram.dto.UserCreateDto;
 import com.jsy.clonegram.dto.UserUpdateDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,4 +27,12 @@ public interface UserMapper {
     Optional<User> findByName(@Param("username") String username);
 
     List<User> findAll();
+
+    List<Follow> findFollowersByUserId(@Param("id") Long userId);
+
+    List<Follow> findFollowingsByUserId(@Param("id") Long userId);
+
+    void followUser(Follow follow);
+
+    void unfollowUser(Follow follow);
 }

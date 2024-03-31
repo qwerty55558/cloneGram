@@ -5,40 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Home</title>
     <th:block th:replace="~{home::header}"></th:block>
+    <style>
+        .centerpanel{
+            background: black;
+            color: white;
+            width: 80%;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .centerpanel::-webkit-scrollbar{
+            display: none;
+        }
+
+        .sidepanel{
+            width: 10%;
+        }
+    </style>
 </head>
 <body>
 <!-- html data -->
-<th:block th:replace="~{home::nav}"></th:block>
-<div class="main-content-center tab-content" id="v-pills-tabContent">
-    <div class="tab tab-pane fade" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab" tabindex="0" >
-        <div class="follow-bar my-3">
-            qwer
-        </div>
-        <div class="content-panel">
-            panel
-        </div>
-    </div>
-    <div class="tab-pane fade show active" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab" tabindex="0" aria-orientation="vertical">
-
+<section class="vh-100 d-flex justify-content-between" style="background: black">
+    <div class="sidepanel"></div>
+    <div class="centerpanel" aria-orientation="horizontal">
         <form class="row" action="/upload" method="post" enctype="multipart/form-data">
             <input class="col-8" id="profilePicUpload" type="file" accept="image/*">
             <button class="col" id="profilePicFileBtn" type="button" style="overflow: hidden" onclick="fetchProfilePicFile()" >파일 보내기</button>
         </form>
     </div>
-</div>
-<div class="side-bar-right">
-    qwer
-</div>
+    <div class="sidepanel"></div>
 </section>
 <!-- html data-->
 <th:block th:replace="~{home::footer}"></th:block>
 <script th:inline="javascript">
-
-    $(document).ready(function () {
-        $("#v-pills-home-tab").removeClass("active");
-        $("#v-pills-profile-tab").addClass("active");
-    });
-
     const max_size = 10 * 1024 * 1024;
 
     $("#profilePicUpload").on("change", function () {
@@ -64,6 +63,11 @@
             .then(data => {
                 console.log(data); // 서버에서 반환한 데이터 출력
                 alert("데이터가 성공적으로 전달되었습니다.");
+                let currentUrl = window.location.href;
+                let parts = currentUrl.split('/');
+                parts.pop(); // Remove the last part (current page)
+                parts.pop();
+                location.href = parts.join('/')+"?tab=profile"; // Redirect to the parent URL
             })
             .catch(error => {
                 console.error('Error:', error);

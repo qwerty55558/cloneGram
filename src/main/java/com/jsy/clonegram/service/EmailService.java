@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
-
-import java.util.Properties;
 
 
 @Service
@@ -22,7 +19,7 @@ public class EmailService {
     public String sendAuthEmail(String to) {
         SimpleMailMessage msg = new SimpleMailMessage();
         String code = new GenerateAuthCode().executeGenerate();
-        redisService.setRedisTemplate(to, code);
+        redisService.setEmailAuthCode(to, code);
 
         log.info("code = {}",code);
 

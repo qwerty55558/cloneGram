@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.security.Security;
 import java.util.Optional;
 
 /**
@@ -53,8 +54,24 @@ public class UserService {
         return true;
     }
 
+    public Boolean updateUser(Long userId, UserUpdateDto dto){
+        dto.setTargetId(userId);
+        rep.update(dto);
+        return true;
+    }
+
     public String getUsernameOnSession(){
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return principal.getUsername();
+    }
+
+    public Long getUserIdOnSession(){
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = principal.getUsername();
+        Optional<User> byName = rep.findByName(username);
+        if (byName.isPresent()) {
+            return byName.get().getId();
+        }
+        return -1L;
     }
 }

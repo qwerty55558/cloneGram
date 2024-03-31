@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 @Slf4j
+@Transactional
 class RedisServiceTest {
 
     @Autowired
@@ -16,7 +17,7 @@ class RedisServiceTest {
 
     @Test
     void testRedis(){
-        service.setRedisTemplate("1234", "1234");
+        service.setEmailAuthCode("1234", "1234");
         String redisTemplate = service.getRedisTemplate("1234");
         log.info(redisTemplate);
     }

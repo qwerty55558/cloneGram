@@ -5,6 +5,7 @@ import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
 import com.jsy.clonegram.dao.Post;
 import com.jsy.clonegram.dao.User;
+import com.jsy.clonegram.dto.UserUpdateDto;
 import com.jsy.clonegram.repository.JpaPostRepository;
 import com.jsy.clonegram.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,17 +38,53 @@ public class UserPictureService {
                 .generate("images/" + usernameOnSession + "/" + usernameOnSession + "_pic");
         // force_version이 적용 안 됨
         log.info("img = {}",image);
+        UserUpdateDto userUpdateDto = new UserUpdateDto();
+        userUpdateDto.setProfileImageUrl(image);
+        userService.updateUser(userService.getUserIdOnSession(), userUpdateDto);
+        return image;
+    }
+
+    public String getMiniPicUrl(String userName){
+        String image = cloudinary.url().version(redisService.getVersion(userName)).forceVersion(true)
+                .transformation(new Transformation()
+                        .width("25")
+                        .height("25")
+                        .quality("80"))
+                .generate("images/" + userName + "/" + userName + "_pic");
+        // force_version이 적용 안 됨
+        log.info("img = {}",image);
         return image;
     }
 
     public String getProfilePicUrl(){
         String usernameOnSession = userService.getUsernameOnSession();
-//        String usernameOnSession = "asdf";
         String image = cloudinary.url().version(redisService.getVersion(usernameOnSession)).forceVersion(true)
                 .transformation(new Transformation()
                         .width("200")
                         .height("200"))
                         .generate("images/" + usernameOnSession + "/" + usernameOnSession + "_pic");
+
+        log.info("img = {}",image);
+        return image;
+    }
+
+    public String getProfilePicUrl(String userName){
+        String image = cloudinary.url().version(redisService.getVersion(userName)).forceVersion(true)
+                .transformation(new Transformation()
+                        .width("200")
+                        .height("200"))
+                .generate("images/" + userName + "/" + userName + "_pic");
+
+        log.info("img = {}",image);
+        return image;
+    }
+
+    public String getProfilePicUrlHighQ(String userName){
+        String image = cloudinary.url().version(redisService.getVersion(userName)).forceVersion(true)
+                .transformation(new Transformation()
+                        .width("400")
+                        .height("400"))
+                .generate("images/" + userName + "/" + userName + "_pic");
 
         log.info("img = {}",image);
         return image;
@@ -67,6 +104,16 @@ public class UserPictureService {
                 .transformation(new Transformation()
                         .width("30")
                         .height("30"))
+                .generate("images/" + userName + "/" + userName + "_pic");
+    }
+
+    public String getMidSizeProfileById(Long userId){
+        Optional<User> byId = userRepository.findById(userId);
+        String userName = byId.get().getUserName();
+        return cloudinary.url().version(redisService.getVersion(userName)).forceVersion(true)
+                .transformation(new Transformation()
+                        .width("80")
+                        .height("80"))
                 .generate("images/" + userName + "/" + userName + "_pic");
     }
 

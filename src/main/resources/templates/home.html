@@ -10,7 +10,7 @@
     <!--  FontAwesome  -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!--  QuillCss-->
-    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.3/dist/quill.core.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.3/dist/quill.snow.css" rel="stylesheet">
     </th:block>
 
     <style>
@@ -74,7 +74,7 @@
 
 
     .nav-item-text{
-        color: white; /* 부모 요소로부터 상속받은 색상 사용 */
+        color: white;
         text-decoration: none; /* 밑줄 제거 */
     }
 
@@ -92,9 +92,6 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
-
-
-
 
     @media(max-width: 900px){
         .side-bar-right{
@@ -157,7 +154,13 @@
             <button class="btn btn-outline-dark navbtn text-white" id="v-pills-likey-tab" data-bs-toggle="pill" data-bs-target="#v-pills-likey" type="button" role="tab" aria-controls="v-pills-likey" aria-selected="false"><i class="fa-regular fa-heart me-3"></i><span class="btnText">알림</span></button>
             <button class="btn btn-outline-dark navbtn text-white" id="v-pills-create-tab" data-bs-toggle="pill" data-bs-target="#v-pills-create" type="button" role="tab" aria-controls="v-pills-create" aria-selected="false"><i class="fa-regular fa-square-plus me-3"></i><span class="btnText">만들기</span></button>
             <button class="btn btn-outline-dark navbtn text-white" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false"><img class="me-3" th:src="${picurl.miniPic}" style="width: 35px; height: 35px; object-fit: cover;border-radius: 70%;"><span class="btnText">프로필</span></button>
-            <button class="btn btn-outline-dark navbtn text-white mt-auto mb-3" type="button"><i class="fa-solid fa-bars me-3" ></i><span class="btnText">더 보기</span></button>
+            <div class="btn-group dropup mt-auto mb-3">
+<!--                <button class="btn btn-outline-dark navbtn text-white mt-auto mb-3" type="button"><i class="fa-solid fa-bars me-3" ></i><span class="btnText">더 보기</span></button>-->
+                <button class="btn btn-outline-dark navbtn text-white dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" type="button"><i class="fa-solid fa-bars me-3" ></i><span class="btnText">더 보기</span></button>
+                <ul class="dropdown-menu" style="background: black;border: 1px darkslategray solid">
+                    <li><a class="dropdown-item" href="/logout" style="text-decoration: none;color: white">로그아웃</a></li>
+                </ul>
+            </div>
         </div>
     </div>
     <div class="main-content-center tab-content" id="v-pills-tabContent">
@@ -186,9 +189,41 @@
                     <div class="col-4" style="width: 100%">
                         <div class="row">
                             <div class="col-1"></div>
-                            <div class="col-3 profileitem" th:text="'게시물 '+${posts.size()}">게시물 8</div>
-                            <div class="col-4 profileitem" >팔로워 43</div>
-                            <div class="col-3 profileitem" >팔로우 71</div>
+                            <div class="col-3 profileitem" th:text="'게시물 '+${posts.size()}">게시물</div>
+                            <div class="col-4 profileitem"><a id="followercount" href="#" data-bs-toggle="modal" data-bs-target="#followermodal" style="color: white;text-decoration: none" th:text="'팔로워 '+${follow.getFollower()}"></a>
+                                <!-- Modal -->
+                                <div class="modal fade" id="followermodal" tabindex="-1" aria-labelledby="followermodalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content" style="background: black">
+                                            <div class="modal-header justify-content-between">
+                                                <h1 class="modal-title fs-5" id="followermodalLabel">팔로워 목록</h1>
+                                                <a href="#" style="color: white;text-decoration: none" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-window-close fa-xl"></i></a>
+                                            </div>
+                                            <div id="followerList" class="modal-body">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal -->
+                            </div>
+                            <div class="col-4 profileitem"><a id="followingcount" href="#" data-bs-toggle="modal" data-bs-target="#followingmodal" style="color: white;text-decoration: none" th:text="'팔로잉 '+${follow.getFollowing()}" ></a>
+                                <!-- Modal -->
+                                <div class="modal fade" id="followingmodal" tabindex="-1" aria-labelledby="followingmodalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content" style="background: black">
+                                            <div class="modal-header justify-content-between">
+                                                <h1 class="modal-title fs-5" id="followingmodalLabel">팔로잉 목록</h1>
+                                                <a href="#" style="color: white;text-decoration: none" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-window-close fa-xl"></i></a>
+                                            </div>
+                                            <div id="followingList" class="modal-body">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal -->
+                            </div>
                             <div class="col-1"></div>
                         </div>
                     </div>
@@ -219,17 +254,21 @@
                         <input type="file" id="postPicInput" accept="image/*">
                         <img id="postPicImg" hidden="hidden" style="width: 200px;height: 200px">
                         <p></p>
-                        <button type="button" id="postPicDeleteBtn" class="btn btn-outline-dark profilebtn text-white" onclick="deletePostPic()" hidden="hidden" style="justify-content: end">사진 삭제</button>
+                        <button type="button" id="postPicDeleteBtn" class="btn btn-outline-dark profilebtn text-white" hidden="hidden" style="justify-content: end">사진 삭제</button>
                     </div>
                     <div class="card-footer text-center text-white" style="background: black;border-top: darkslategray;border-style: solid;height: fit-content;border-width: 1px">
-                        <div id="editor">
-                        </div>
+                        <div id="editor"></div>
                     </div>
                 </div>
             </div>
             <div class="pan" style="width: 100%;display: flex;justify-content: center;align-content: start">
                 <div class="minipan" style="width: 60%;min-width: 200px"></div>
                 <a href="#!" onclick="fetchPostData()" class="mt-2 me-3" style="justify-content: end;text-decoration: none;color: white"><i class="fa-solid fa-arrow-right fa-lg"></i></a>
+            </div>
+        </div>
+        <div class="tab tab-pane fade panels" id="v-pills-who" role="tabpanel" aria-labelledby="v-pills-who-tab" tabindex="3" aria-orientation="horizontal">
+            <div class="pan" style="width: 100%;display: flex;justify-content: center;align-content: start">
+                <div id="searchbar"></div>
             </div>
         </div>
     </div>
@@ -245,11 +284,14 @@
 <!-- jquery -->
 <script  src="https://code.jquery.com/jquery-latest.min.js"></script>
 <!-- quill editor-->
-<script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.3/dist/quill.core.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.3/dist/quill.js"></script>
+
 </th:block>
 <script th:inline="javascript">
     const maxSize = 1024 * 1024;
+    const captionSize = 500;
     let quill;
+    let squill;
     function goToProfileEditPage() {
         window.location.href = /*[[@{/profile/edit}]]*/ "";
     }
@@ -259,8 +301,8 @@
         let searchParams = new URLSearchParams(window.location.search);
         if (searchParams !== null) {
             // tap 파라미터 확인해서 어느 탭을 되돌려 보낼건지 확인
-            let enableTap = searchParams.get('tap');
-            if (enableTap === 'profile') {
+            let enableTab = searchParams.get('tab');
+            if (enableTab === 'profile') {
                 // 탭 활성화 로직
                 $('#v-pills-home-tab').removeClass('active').attr('aria-selected', 'false');
                 $('#v-pills-profile-tab').addClass('active').attr('aria-selected', 'true');
@@ -269,9 +311,16 @@
             }
 
         }
-
         // editor quill
-        quill = new Quill('#editor');
+        const option = {
+            theme: 'snow',
+            modules:{
+                toolbar: false
+            }
+        }
+        quill = new Quill('#editor',option);
+        squill = new Quill('#searchbar', option);
+
 
         // file upload
         $('#postPicInput').on('change',function () {
@@ -291,7 +340,55 @@
                 reader.readAsDataURL(selectedFile);
             }
         });
+
+        $('#followermodal').on('show.bs.modal', function (e) {
+            $.ajax({
+                url: '/find/myfollower',
+                method: 'GET',
+                success: function(response) {
+                    // 서버로부터 받은 데이터를 사용하여 follower 목록을 구성합니다.
+                    let followerList = response; // 팔로워 목록 데이터
+                    let $followerList = $('#followerList');
+                    $followerList.empty(); // 이전에 표시된 follower 목록을 비웁니다.
+                    followerList.forEach(function(follower) {
+                        $followerList.append('<div class="follower-item"><a style="color: white;text-decoration: none" href="profile?id='+follower.userId+'">'+
+                            '<img class="mx-2" src="' + follower.userPic + '" style="border-radius: 70%">' +
+                            '<span>' + follower.userName + '</span></a>' +
+                            '</div>');
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX 오류:', status, error);
+                }
+            });
+        });
+
+        $('#followingmodal').on('show.bs.modal', function (e) {
+            $.ajax({
+                url: '/find/myfollowing',
+                method: 'GET',
+                success: function(response) {
+                    // 서버로부터 받은 데이터를 사용하여 follower 목록을 구성합니다.
+                    let followingList = response; // 팔로워 목록 데이터
+                    let $followingList = $('#followingList');
+                    $followingList.empty(); // 이전에 표시된 follower 목록을 비웁니다.
+                    followingList.forEach(function(following) {
+                        $followingList.append('<div class="following-item"><a style="color: white;text-decoration: none" href="profile?id='+following.userId+'">'+
+                            '<img class="mx-2" src="' + following.userPic + '" style="border-radius: 70%">' +
+                            '<span>' + following.userName + '</span></a>' +
+                            '</div>');
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX 오류:', status, error);
+                }
+            });
+        });
+
     })
+    // document.ready
+
+
 
     $('#postPicDeleteBtn').click(function () {
         $('#postPicImg').attr('hidden','hidden');
@@ -306,12 +403,12 @@
         let file = fileInput.files[0];
         if (file.size > maxSize) {
             const image = new Image();
+            image.src = URL.createObjectURL(file);
             image.onload = function() {
                 const downsampledFile = downsampleImage(image, 500, 500);
                 formData.append('file', downsampledFile);
                 sendFormData(formData);
             };
-            image.src = URL.createObjectURL(file);
         } else {
             formData.append('file', file);
             sendFormData(formData);
@@ -320,6 +417,10 @@
 
     function sendFormData(formData) {
         let text = quill.getText();
+        if (captionSize < text.length){
+            alert("글은 500 자를 넘을 수 없습니다.");
+            return;
+        }
         formData.append('caption', text);
 
         let fileInput = document.getElementById("postPicInput");
@@ -378,7 +479,6 @@
         }
         return new Blob([arrayBuffer], { type: mimeString });
     }
-
 
 
 </script>

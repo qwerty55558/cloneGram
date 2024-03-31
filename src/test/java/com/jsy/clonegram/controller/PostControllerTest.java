@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +26,8 @@ class PostControllerTest {
     UserService service;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    PostRepository postRepository;
 
     @Test
     void redirectPost() {
@@ -33,5 +36,12 @@ class PostControllerTest {
         List<Post> postsById = repository.findPostsById(byName.get().getId());
         Optional<Post> first = postsById.stream().filter(p -> p.getId().equals(6L)).findFirst();
         log.info("first = {}",first.get());
+    }
+
+    @Test
+    void repTest(){
+        Optional<Post> byId = postRepository.findById(6L);
+        String userName = userRepository.findById(byId.get().getUserId()).get().getUserName();
+        log.info("id = {}",userName);
     }
 }

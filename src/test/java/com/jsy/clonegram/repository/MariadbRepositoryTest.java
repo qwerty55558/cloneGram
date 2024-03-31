@@ -1,5 +1,6 @@
 package com.jsy.clonegram.repository;
 
+import com.jsy.clonegram.dao.Follow;
 import com.jsy.clonegram.dao.Grade;
 import com.jsy.clonegram.dao.User;
 import com.jsy.clonegram.dto.UserCreateDto;
@@ -24,7 +25,33 @@ class MariadbRepositoryTest {
     @Autowired
     UserService service;
 
+    @Test
+    void testFollow(){
+        Follow follow = new Follow();
+        follow.setFollowerId(3L);
+        follow.setUserId(2L);
+        repository.followUser(follow);
+        follow.setFollowerId(4L);
+        follow.setUserId(2L);
+        repository.followUser(follow);
+        List<Follow> followersByUserId = repository.findFollowersByUserId(2L);
+        log.info("follower = {}",followersByUserId);
+    }
 
+    @Test
+    void testFollowing(){
+        Follow follow = new Follow();
+        follow.setFollowerId(3L);
+        follow.setUserId(2L);
+        repository.followUser(follow);
+        follow.setFollowerId(4L);
+        follow.setUserId(2L);
+        repository.followUser(follow);
+        List<Follow> followersByUserId = repository.findFollowingsByUserId(2L);
+        List<Follow> followingsByUserId = repository.findFollowingsByUserId(2L);
+        log.info("follower = {}",followersByUserId);
+        log.info("following = {}",followingsByUserId);
+    }
 
     @Test
     void testUpdate(){

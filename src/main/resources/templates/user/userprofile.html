@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home</title>
+    <th:block th:replace="~{home::header}"></th:block>
+    <style>
+        .profileitem::-webkit-scrollbar{
+            display: none;
+        }
+        .profilebtn{
+            outline-style: hidden;
+            font-size: medium;
+            text-align: center;
+            text-overflow: fade;
+            overflow: hidden;
+            word-wrap: break-word;
+        }
+
+        .profileitem{
+            margin: auto;
+            padding: 5px;
+            font-size: large;
+            word-break: keep-all;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .centerpanel{
+            background: black;
+            color: white;
+            width: 80%;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .centerpanel::-webkit-scrollbar{
+            display: none;
+        }
+
+        .sidepanel{
+            width: 10%;
+        }
+
+        @media (max-width: 600px) {
+            .picpanel{
+                padding-top: 450px;
+            }
+            .postimage{
+                height: 300px;
+            }
+
+        }
+
+        @media (min-width: 601px) {
+            .picpanel{
+                padding-top: 150px;
+            }
+            .postimage{
+                height: 250px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+<!-- html data -->
+<section class="vh-100 d-flex justify-content-between" style="background: black">
+    <div class="sidepanel"></div>
+    <div class="centerpanel" aria-orientation="horizontal">
+        <div class="row pt-5" style="width:100%;height: 30%">
+            <div class="col-xl-4 col-lg-5 col-md-6 col-sm-6 ">
+                <img th:src="${picurl.profilePic}" style="border-radius: 70%;max-width: 65%">
+            </div>
+            <div class="col-xl-8 col-lg-7 col-md-6 col-sm-6">
+                <div class="col-4 pt-4" style="width: 90%">
+                    <div class="row">
+                        <div class="col-3 profileitem" style="font-weight: bold;font-size: larger" th:text="${user.getUserName()}"></div>
+                        <div class="col-4 profileitem">
+                            <button class="btn btn-outline-dark profilebtn text-white" id="unfollowuser" th:if="${follow.getFollowCheck()}">언팔로우하기</button>
+                            <button class="btn btn-outline-dark profilebtn text-white" id="followuser" th:unless="${follow.getFollowCheck()}">팔로우하기</button>
+                        </div>
+                        <div class="col-4 profileitem"></div>
+                        <div class="col-1 profileitem"><i class="fa-solid fa-gear fa-lg"></i></div>
+                    </div>
+                </div>
+                <div class="col-4" style="width: 100%">
+                    <div class="row">
+                        <div class="col-1"></div>
+                        <div class="col-3 profileitem" th:text="'게시물 '+${posts.size()}">게시물</div>
+                        <div class="col-4 profileitem" th:text="'팔로워 '+${follow.getFollower()}">팔로워</div>
+                        <div class="col-3 profileitem" th:text="'팔로잉 '+${follow.getFollowing()}">팔로잉</div>
+                        <div class="col-1"></div>
+                    </div>
+                </div>
+                <div class="col-4 pt-4" style="width: 100%">
+                    <div class="row profileitem" style="font-weight: bold" th:text="${user.getFullName()}">
+
+                    </div>
+                    <div class="row profileitem" style="height: 100px; overflow: scroll" th:text="${user.getBio()}">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row picpanel" style="width:100%">
+            <div class="col-xxl-4 col-md-6 my-3" th:each="post : ${posts}">
+                <a th:href="@{'/post?id='+${post.getId()}}"><img class="postimage" th:src="${post.getImageUrl()}" style="border-radius: 20%;width: auto;" alt=""></a>
+            </div>
+        </div>
+    </div>
+    <div class="sidepanel"></div>
+</section>
+<!-- html data-->
+<th:block th:replace="~{home::footer}"></th:block>
+<script>
+    let targetId
+    $(document).ready(function () {
+        let searchParams = new URLSearchParams(window.location.search);
+        if (searchParams !== null) {
+            targetId = searchParams.get('id');
+        }
+    });
+
+
+    $('#followuser').click(function (){
+        $.ajax({
+            url: 'follow',
+            type: 'POST',
+            data: {
+                followuser : targetId,
+            },
+            success: function(response) {
+                console.log('Success:', response);
+                // 1초 후에 페이지를 리디렉션
+                setTimeout(function() {
+                    location.reload();
+                }, 500);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    })
+    $('#unfollowuser').click(function (){
+        $.ajax({
+            url: '/unfollow',
+            type: 'POST',
+            data: {
+                unfollowuser : targetId,
+            },
+            success: function(response) {
+                console.log('Success:', response);
+                // 1초 후에 페이지를 리디렉션
+                setTimeout(function() {
+                    location.reload();
+                }, 500);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    })
+</script>
+</body>
+</html>

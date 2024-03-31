@@ -14,7 +14,7 @@ public class RedisService {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    public void setRedisTemplate(String Email, String authCode) {
+    public void setEmailAuthCode(String Email, String authCode) {
         if (redisTemplate.opsForValue().get(Email) != null) {
             redisTemplate.delete(Email);
         }
@@ -55,16 +55,38 @@ public class RedisService {
         return redisTemplate.opsForValue().get(username + "_pic");
     }
 
-    public String getPostVersion(Long postId) {
-        return redisTemplate.opsForValue().get("postId_" + postId);
-    }
 
-    public void deleteRecordByInfo(String Info){
+    public void deleteRecordByString(String Info){
         try {
             redisTemplate.delete(Info);
         } catch (Exception e) {
             log.info("redis delete error", e);
         }
+    }
+
+    public void setFollower(Long userId, Long followerSize){
+        redisTemplate.opsForValue().set(userId+"_follower",followerSize.toString());
+    }
+
+    public void setFollowing(Long userId, Long followingSize) {
+        redisTemplate.opsForValue().set(userId+"_following",followingSize.toString());
+    }
+
+    public String getFollower(Long userId){
+
+        String s = redisTemplate.opsForValue().get(userId + "_follower");
+        if (s == null) {
+            return "0";
+        }
+        return s;
+    }
+
+    public String getFollowing(Long userId){
+        String s = redisTemplate.opsForValue().get(userId + "_following");
+        if (s == null) {
+            return "0";
+        }
+        return s;
     }
 
 }

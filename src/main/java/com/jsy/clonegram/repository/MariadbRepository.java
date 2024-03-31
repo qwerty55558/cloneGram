@@ -1,5 +1,6 @@
 package com.jsy.clonegram.repository;
 
+import com.jsy.clonegram.dao.Follow;
 import com.jsy.clonegram.dao.Grade;
 import com.jsy.clonegram.dao.User;
 import com.jsy.clonegram.dto.UserCreateDto;
@@ -22,6 +23,11 @@ import java.util.Optional;
 public class MariadbRepository implements UserRepository {
 
     private final UserMapper userMapper;
+
+    @Override
+    public void unfollowUser(Follow follow) {
+        userMapper.unfollowUser(follow);
+    }
 
     @Override
     public void save(UserCreateDto user) {
@@ -51,5 +57,20 @@ public class MariadbRepository implements UserRepository {
     @Override
     public List<User> findAll() {
         return userMapper.findAll();
+    }
+
+    @Override
+    public void followUser(Follow follow) {
+        userMapper.followUser(follow);
+    }
+
+    @Override
+    public List<Follow> findFollowersByUserId(Long userId) {
+        return userMapper.findFollowersByUserId(userId);
+    }
+
+    @Override
+    public List<Follow> findFollowingsByUserId(Long userId) {
+        return userMapper.findFollowingsByUserId(userId);
     }
 }
