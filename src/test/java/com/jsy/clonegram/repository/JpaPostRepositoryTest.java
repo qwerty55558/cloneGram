@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
-import java.util.Random;
-
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
 
 @SpringBootTest
 @Slf4j
@@ -19,27 +21,31 @@ class JpaPostRepositoryTest {
 
     @Test
     void save() {
-        Post post = new Post();
-        post.setImageUrl("https://res.cloudinary.com/degplajej/image/upload/h_200,w_200/v1710753943/images/asdf/asdf_pic");
-        post.setCaption("이것이 캡션이다 와우 와우 와우");
-        post.setUserId(2L);
-        rep.save(post);
-        log.info("Post = {}",post);
+        for (int i = 0; i < 30; i++) {
+            Post post = new Post();
+            post.setImageUrl("https://res.cloudinary.com/degplajej/image/upload/h_200,w_200/v1710753943/images/asdf/asdf_pic");
+            post.setCaption("이것이 캡션이다 와우 와우 와우");
+            post.setUserId(2L);
+            rep.save(post);
+        }
     }
 
     @Test
-    void findById() {
+    void findRandPost(){
+        List<Post> withPagination = rep.findWithPagination(12);
+        log.info("page = {}",withPagination);
     }
 
     @Test
-    void update() {
+    void findCondPost(){
+        List<Post> caption = rep.findPosts(12, "캡션이다");
+        log.info("caption = {}", caption);
     }
 
     @Test
-    void delete() {
-    }
-
-    @Test
-    void findPostsById() {
+    void findCondPost2(){
+        Pageable createdAt = PageRequest.of(0, 10, Sort.by("created_at").descending());
+        Page<Post> withCond = rep.findPosts(createdAt,"캡션");
+        log.info("withCond = {}", withCond.iterator().next());
     }
 }

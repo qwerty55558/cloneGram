@@ -4,6 +4,7 @@ import com.jsy.clonegram.dao.Comment;
 import com.jsy.clonegram.dao.Post;
 import com.jsy.clonegram.dao.User;
 import com.jsy.clonegram.repository.JpaCommentRepository;
+import com.jsy.clonegram.repository.JpaLikeyRepository;
 import com.jsy.clonegram.repository.PostRepository;
 import com.jsy.clonegram.repository.UserRepository;
 import com.jsy.clonegram.service.UserPictureService;
@@ -26,6 +27,7 @@ public class PostController {
     private final UserPictureService pictureService;
     private final UserRepository userRepository;
     private final JpaCommentRepository commentRepository;
+    private final JpaLikeyRepository likeyRepository;
 
     @GetMapping("post")
     public String redirectPost(@RequestParam(name = "id") Long id, Model model) {
@@ -50,6 +52,9 @@ public class PostController {
             }
             log.info("usernameMap = {}",usernameMap);
 
+            Optional<Long> l = likeyRepository.countByPostId(postById.get().getId());
+
+            l.ifPresent(aLong -> model.addAttribute("likeyCount", aLong));
 
             model.addAttribute("picMap", picMap); // 모델에 사진 맵과 유저네임 맵을 등록
             model.addAttribute("usernameMap", usernameMap);

@@ -76,7 +76,13 @@
             </div>
             <div class="card-body">
                 <img th:src="${post.getImageUrl()}" class="mx-5 my-3 imgpanel">
+                <div class="likePanel my-auto" style="width: 90%;display: flex;justify-content: end;">
+                    <span th:if="${likeyCount!=null}" class="mx-3" style="justify-content: start;" th:text="${'좋아요 '+likeyCount+'개'}"></span>
+                    <a id="Xheart" href="" style="color: red;text-decoration: none" onclick="likeyReqSend('O')"><i class="fa-regular fa-heart fa-2x"></i></a>
+                    <a id="Oheart" href="" style="color: red;text-decoration: none" onclick="likeyReqSend('X')"><i class="fa-solid fa-heart fa-2x"></i></a>
+                </div>
                 <p class="card-text text-start" style="word-wrap: break-word"><span class="me-2" th:text="${usernameMap.get(post.getUserId())}"style="font-weight: bold;"></span><span th:text="${post.getCaption()}"></span></p>
+
             </div>
             <div class="card-footer text-start">
                 <div style="width: 100%;display: flex">
@@ -87,6 +93,7 @@
                         <a href="#!" onclick="postComment()" style="text-decoration: none;color: white"><i class="fa-solid fa-arrow-right fa-2x"></i></a>
                     </div>
                 </div>
+
                 <div class="commentPanel" th:each="comment : ${comments}" style="width: 100%;height: fit-content">
                     <div class="mx-2 mb-3 row" style="width: 100%;border-bottom: darkslategray;border-width: 1px;">
                         <img class="col-lg-2 mt-3" th:src="${picMap.get(comment.getUserId())}" style="width: 80px;height: 56px;border-radius: 70%;justify-content: center;align-content: start" alt="">
@@ -106,15 +113,60 @@
     const postId = new URLSearchParams(window.location.search).get("id");
     const maxCommentLength = 255;
     let quill;
-    $(document).ready(function (){
+    let currentUrl = new URL(window.location.href);
+    let searchParams = new URLSearchParams(currentUrl.search);
+    let paramValue = searchParams.get('id');
+
+    $(document).ready(function () {
         const option = {
             theme: 'snow',
-            modules:{
+            modules: {
                 toolbar: false
             }
         }
         quill = new Quill('#editor', option);
-    })
+
+        likeyInfoSend();
+    });
+
+    function likeyReqSend(text){
+        $.ajax({
+            url: '/find/likey',
+            method: 'POST',
+            data: {
+                postname: paramValue,
+                action: text
+            },
+            success: function () {
+                console.log('요청 전송');
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX 오류:', status, error);
+            }
+        });
+    }
+
+    function likeyInfoSend(){
+        $.ajax({
+            url: '/find/likey/info',
+            method: 'POST',
+            data:{
+                postname: paramValue
+            },
+            success: function(response) {
+                if (response){
+                    $('#Oheart').show();
+                    $('#Xheart').hide();
+                }else{
+                    $('#Oheart').hide();
+                    $('#Xheart').show();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX 오류:', status, error);
+            }
+        });
+    }
 
     function postComment(){
         let formData = new FormData();
