@@ -74,4 +74,9 @@ public class UserService {
         }
         return -1L;
     }
+
+    public Long getUserIdByName(String userName) {
+        Optional<User> byName = rep.findByName(userName);
+        return byName.map(User::getId).orElse(null);
+    }
 }

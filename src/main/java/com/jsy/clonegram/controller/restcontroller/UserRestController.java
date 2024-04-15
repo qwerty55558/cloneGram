@@ -5,7 +5,6 @@ import com.jsy.clonegram.dao.User;
 import com.jsy.clonegram.dto.UserProfileDto;
 import com.jsy.clonegram.repository.UserRepository;
 import com.jsy.clonegram.service.FollowService;
-import com.jsy.clonegram.service.UserPictureService;
 import com.jsy.clonegram.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,6 @@ public class UserRestController {
     private final FollowService followService;
     private final UserService userService;
     private final UserRepository userRepository;
-    private final UserPictureService userPictureService;
 
     @PostMapping("/follow")
     public String followUser(@RequestParam(name = "followuser") Long id) {
@@ -66,14 +64,14 @@ public class UserRestController {
     }
 
     @GetMapping("/find/myfollowing")
-    public List<UserProfileDto> getMyFollowing(){
+    public List<UserProfileDto> getMyFollowing() {
         LinkedList<UserProfileDto> userProfileDtos = new LinkedList<>();
 
 
         Long userIdOnSession = userService.getUserIdOnSession();
         userRepository.findFollowingsByUserId(userIdOnSession).stream().distinct().map(c -> c.getUserId()).forEach(c -> {
             Optional<User> byId = userRepository.findById(c);
-            if (byId.isPresent()){
+            if (byId.isPresent()) {
                 UserProfileDto userProfileDto = new UserProfileDto();
                 userProfileDto.setUserName(byId.get().getUserName());
                 userProfileDto.setUserPic(byId.get().getProfileImageUrl());

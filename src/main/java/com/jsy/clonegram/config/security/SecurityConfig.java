@@ -1,6 +1,7 @@
 package com.jsy.clonegram.config.security;
 
 import com.jsy.clonegram.config.security.handler.AccessRejectedHandler;
+import com.jsy.clonegram.config.security.handler.MyLogoutSuccessHandler;
 import com.jsy.clonegram.dao.Grade;
 import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -27,20 +29,21 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     private final AccessDeniedHandler rejectHandler;
+    private final MyLogoutSuccessHandler logoutSuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
+                .sessionManagement(withDefaults -> withDefaults
+                        .invalidSessionUrl("/login")
+                        .maximumSessions(1)
+                        .maxSessionsPreventsLogin(false)
+                )
                 .authorizeHttpRequests(request -> request
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                        .requestMatchers("/status", "/images/**", "sign/**", "/sendEmail", "/checkCode","/validation/**").permitAll()
+                        .requestMatchers("/status", "/images/**", "sign/**", "/sendEmail", "/checkCode", "/validation/**").permitAll()
                         .requestMatchers("/dashboard/**").hasRole(Grade.Admin.getCode()) // dashboard가 포함된 URI에서는 role 요건이 충족되어야 접속 가능
                         .anyRequest().authenticated()    // 어떠한 요청이라도 인증필요
                 )
@@ -55,7 +58,8 @@ public class SecurityConfig {
                         .failureUrl("/login?error")
                         .permitAll()
                 )
-                .logout(withDefaults());    // 로그아웃은 기본설정으로 (/logout으로 인증해제)
+                .logout(withDefaults -> withDefaults
+                        .logoutSuccessHandler(logoutSuccessHandler));    // 로그아웃은 기본설정으로 (/logout으로 인증해제)
 
         return http.build();
     }

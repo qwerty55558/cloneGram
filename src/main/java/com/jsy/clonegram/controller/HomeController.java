@@ -53,7 +53,7 @@ public class HomeController {
             followSetDto.setFollower(followService.getFollowerCount(byName.get().getId()));
             followSetDto.setFollowing(followService.getFollowingCount(byName.get().getId()));
 
-            log.info("Follow = {}",followSetDto.toString());
+//            log.info("Follow = {}",followSetDto.toString());
 
             model.addAttribute("follow", followSetDto);
             model.addAttribute("user", byName.get());

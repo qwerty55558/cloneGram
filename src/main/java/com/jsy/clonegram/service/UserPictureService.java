@@ -37,7 +37,7 @@ public class UserPictureService {
                 .quality("80"))
                 .generate("images/" + usernameOnSession + "/" + usernameOnSession + "_pic");
         // force_version이 적용 안 됨
-        log.info("img = {}",image);
+//        log.info("img = {}",image);
         UserUpdateDto userUpdateDto = new UserUpdateDto();
         userUpdateDto.setProfileImageUrl(image);
         userService.updateUser(userService.getUserIdOnSession(), userUpdateDto);
@@ -52,7 +52,7 @@ public class UserPictureService {
                         .quality("80"))
                 .generate("images/" + userName + "/" + userName + "_pic");
         // force_version이 적용 안 됨
-        log.info("img = {}",image);
+//        log.info("img = {}",image);
         return image;
     }
 
@@ -64,7 +64,7 @@ public class UserPictureService {
                         .height("200"))
                         .generate("images/" + usernameOnSession + "/" + usernameOnSession + "_pic");
 
-        log.info("img = {}",image);
+//        log.info("img = {}",image);
         return image;
     }
 
@@ -75,7 +75,7 @@ public class UserPictureService {
                         .height("200"))
                 .generate("images/" + userName + "/" + userName + "_pic");
 
-        log.info("img = {}",image);
+//        log.info("img = {}",image);
         return image;
     }
 
@@ -86,7 +86,7 @@ public class UserPictureService {
                         .height("400"))
                 .generate("images/" + userName + "/" + userName + "_pic");
 
-        log.info("img = {}",image);
+//        log.info("img = {}",image);
         return image;
     }
 

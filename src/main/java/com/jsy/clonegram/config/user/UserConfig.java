@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * User 단에서 사용되는 클래스들을 Bean 등록 시킴
@@ -23,6 +25,11 @@ public class UserConfig {
     @Value("${CLOUDINARY.URL}")
     private String cloudinaryUrl;
     private final UserMapper userMapper;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public UserService userService(){
