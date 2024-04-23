@@ -112,6 +112,21 @@
         display: none;
     }
 
+    #notificationsList::-webkit-scrollbar{
+        display: none;
+    }
+
+    .notification-count {
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        text-align: center;
+        line-height: 20px;
+        display: inline-block;
+    }
+
     @media(max-width: 900px){
         .side-bar-right{
             display: none;
@@ -170,7 +185,7 @@
             <button class="btn btn-outline-dark navbtn text-white" id="v-pills-search-tab" data-bs-toggle="pill" data-bs-target="#v-pills-search" type="button" role="tab" aria-controls="v-pills-search" aria-selected="false"><i class="fa-solid fa-compass me-3"></i><span class="btnText">탐색 탭</span></button>
             <button class="btn btn-outline-dark navbtn text-white" id="v-pills-video-tab" data-bs-toggle="pill" data-bs-target="#v-pills-video" type="button" role="tab" aria-controls="v-pills-video" aria-selected="false"><i class="fa-solid fa-camera-retro me-3"></i><span class="btnText">릴스</span></button>
             <button class="btn btn-outline-dark navbtn text-white" id="v-pills-message-tab" data-bs-toggle="pill" data-bs-target="#v-pills-message" type="button" role="tab" aria-controls="v-pills-message" aria-selected="false"><i class="fa-solid fa-location-arrow me-3"></i><span class="btnText">메시지</span></button>
-            <button class="btn btn-outline-dark navbtn text-white" id="v-pills-likey-tab" data-bs-toggle="pill" data-bs-target="#v-pills-likey" type="button" role="tab" aria-controls="v-pills-likey" aria-selected="false"><i class="fa-regular fa-heart me-3"></i><span class="btnText">알림</span></button>
+            <button class="btn btn-outline-dark navbtn text-white" id="v-pills-likey-tab" data-bs-toggle="pill" data-bs-target="#v-pills-likey" type="button" role="tab" aria-controls="v-pills-likey" aria-selected="false"><i class="fa-regular fa-heart me-3"></i><span class="btnText">알림</span><span id="notificationCount" class="notification-count mx-1"></span></button>
             <button class="btn btn-outline-dark navbtn text-white" id="v-pills-create-tab" data-bs-toggle="pill" data-bs-target="#v-pills-create" type="button" role="tab" aria-controls="v-pills-create" aria-selected="false"><i class="fa-regular fa-square-plus me-3"></i><span class="btnText">만들기</span></button>
             <button class="btn btn-outline-dark navbtn text-white" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false"><img class="me-3" th:src="${picurl.miniPic}" style="width: 35px; height: 35px; object-fit: cover;border-radius: 70%;"><span class="btnText">프로필</span></button>
             <div class="btn-group dropup mt-auto mb-3">
@@ -183,11 +198,8 @@
     </div>
     <div class="main-content-center tab-content" id="v-pills-tabContent">
         <div class="tab tab-pane fade panels show active " id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab" tabindex="0" aria-orientation="horizontal" >
-            <div class="follow-bar my-3">
-                qwer
-            </div>
-            <div class="content-panel">
-                panel
+            <div class="pan" style="width: 80%; display: flex; justify-content: center; align-items: start; flex-direction: column;">
+
             </div>
         </div>
         <div class="tab tab-pane fade panels" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab" tabindex="1" aria-orientation="horizontal">
@@ -325,6 +337,17 @@
                 </div>
             </div>
         </div>
+        <div class="tab tab-pane fade panels" id="v-pills-likey" role="tabpanel" aria-labelledby="v-pills-likey-tab" tabindex="5" aria-orientation="horizontal">
+            <div class="pan" style="width: 80%; display: flex; justify-content: center; align-items: start; flex-direction: column;">
+                <div class="my-4 justify-content-between" style="width: 100%;display: flex;flex-direction: row">
+                    <div class="h1">알림</div>
+                    <div class="text-body-secondary text-decoration-underline"><a id="notificationsDelete" href="#" style="color: white">모두 삭제</a></div>
+                </div>
+                <div id="notificationsList" style="width: 100%;display: flex;justify-content: center;align-content: start;flex-direction: column;overflow-y: auto">
+
+                </div>
+            </div>
+        </div>
     </div>
     <div class="side-bar-right">
         qwer
@@ -354,14 +377,28 @@
 
     eventSource.onmessage = function (event){
         let parse = JSON.parse(event.data);
-        const messagesDiv = $('#messageContent');
-        console.log(parse);
-        if (parse.userName === $('#msgtargetuser').text()) {
-            messagesDiv.append('<div class="me-auto msgtext">' + parse.message + '</div>');
-            setTimeout(function () {
-                scrollToBottom($('#messagepane')[0]);
-            }, 300);
+        let eventId = event.lastEventId;
+        if (eventId === 'message') {
+            const messagesDiv = $('#messageContent');
+            console.log(parse);
+            if (parse.userName === $('#msgtargetuser').text()) {
+                messagesDiv.append('<div class="me-auto msgtext">' + parse.message + '</div>');
+                setTimeout(function () {
+                    scrollToBottom($('#messagepane')[0]);
+                }, 300);
+            }
         }
+        if (eventId === 'notifications_count') {
+            const notificationsDiv = $('#notificationCount');
+            console.log(parse);
+            if (parse !== null) {
+                notificationsDiv.show();
+                notificationsDiv.text(parse);
+            }else{
+                notificationsDiv.hide();
+            }
+        }
+
     }
 
 
@@ -456,14 +493,14 @@
 
     // Document.ready
     $(document).ready(function () {
+        loadNotifications();
+
 
         // 파라미터 확인
         let searchParams = new URLSearchParams(window.location.search);
         if (searchParams !== null) {
-            // tap 파라미터 확인해서 어느 탭을 되돌려 보낼건지 확인
             let enableTab = searchParams.get('tab');
             if (enableTab === 'profile') {
-                // 탭 활성화 로직
                 $('#v-pills-home-tab').removeClass('active').attr('aria-selected', 'false');
                 $('#v-pills-profile-tab').addClass('active').attr('aria-selected', 'true');
                 $('#v-pills-home').removeClass('show').removeClass('active');
@@ -472,7 +509,7 @@
 
         }
 
-        // editor quill
+        // editor quill settings
         const option = {
             theme: 'snow',
             modules:{
@@ -506,16 +543,15 @@
         $('#postPicInput').on('change',function () {
             let selectedFile = $(this)[0].files[0];
             if (selectedFile) {
-                // 선택된 파일이 있을 경우
                 let reader = new FileReader();
                 reader.onload = function(event) {
-                    // 파일을 읽어서 base64 URL로 변환
                     let imageUrl = event.target.result;
-                    // hidden 이미지의 src 속성에 설정, hidden 속성 제거
                     $('#postPicImg').attr('src', imageUrl).removeAttr('hidden');
                     $('#hiddenTitle').attr('hidden', 'hidden');
                     $('#postPicInput').attr('hidden', 'hidden');
                     $('#postPicDeleteBtn').removeAttr('hidden');
+                    loadMsgOnTab();
+
                 };
                 reader.readAsDataURL(selectedFile);
             }
@@ -527,10 +563,9 @@
                 url: '/find/myfollower',
                 method: 'GET',
                 success: function(response) {
-                    // 서버로부터 받은 데이터를 사용하여 follower 목록을 구성합니다.
-                    let followerList = response; // 팔로워 목록 데이터
+                    let followerList = response;
                     let $followerList = $('#followerList');
-                    $followerList.empty(); // 이전에 표시된 follower 목록을 비웁니다.
+                    $followerList.empty();
                     followerList.forEach(function(follower) {
                         $followerList.append('<div class="follower-item"><a style="color: white;text-decoration: none" href="profile?id='+follower.userId+'">'+
                             '<img class="mx-2" src="' + follower.userPic + '" style="border-radius: 70%">' +
@@ -550,10 +585,9 @@
                 url: '/find/myfollowing',
                 method: 'GET',
                 success: function(response) {
-                    // 서버로부터 받은 데이터를 사용하여 follower 목록을 구성합니다.
-                    let followingList = response; // 팔로워 목록 데이터
+                    let followingList = response;
                     let $followingList = $('#followingList');
-                    $followingList.empty(); // 이전에 표시된 follower 목록을 비웁니다.
+                    $followingList.empty();
                     followingList.forEach(function(following) {
                         $followingList.append('<div class="following-item"><a style="color: white;text-decoration: none" href="profile?id='+following.userId+'">'+
                             '<img class="mx-2" src="' + following.userPic + '" style="border-radius: 70%">' +
@@ -567,29 +601,30 @@
             });
         });
 
+
         $('#v-pills-who-tab').on('show.bs.tab', function (e) {
             loadPosts()
         });
 
         $('#v-pills-message-tab').on('show.bs.tab', function (e) {
+            loadMsgOnTab();
+        });
+
+        // notifications
+        $('#v-pills-likey-tab').on('show.bs.tab', function (e) {
             $.ajax({
-                url: '/find/myfollowing',
+                url: '/find/notifications',
                 method: 'GET',
                 success: function (response) {
-                    let followingList = response;
-                    let $messageList = $('#messageList');
-                    $messageList.empty();
-                    followingList.forEach((following, index, array) => {
-                        let messageUserId = 'messageUser-' + index; // 각 messageUser의 ID를 생성합니다.
-                        // 각 messageUser에 고유한 ID를 부여하고, 클릭 이벤트를 바인딩합니다.
-                        $messageList.append('<div id="' + messageUserId + '" class="messageUser my-4 h4" style="display: flex;justify-content: space-between;align-content: start">' +
-                            '<div><a style="color: white;text-decoration: none" href="profile?id=' + following.userId + '">' +
-                            '<img class="mx-2" src="' + following.userPic + '" style="border-radius: 70%;width: 40px;height: 40px">' +
-                            '<span>' + following.userName + '</span></a></div>' +
-                            '<div><a href="#" style="color: white;text-decoration: none" data-bs-toggle="offcanvas" data-bs-target="#v-offcanvas-message" aria-controls="v-offcanvas-message" data-target-id="' + messageUserId + '"><i class="fa-solid fa-message"></i></a></div>' +
+                    let notifications = response;
+                    let $notificationsList = $('#notificationsList');
+                    $notificationsList.empty();
+                    notifications.forEach((notifications, index, array) => {
+                        $notificationsList.prepend('<div class="my-4 h4" style="display: flex;justify-content: space-between;align-content: start">' +
+                            '<a href="#" style="color: white;text-decoration: none" onclick="findNotificationPage('+notifications.id+')">'+notifications.message+'</a>' +
                             '</div>');
                         if (index !== array.length - 1) {
-                            $messageList.append('<div class="mx-auto" style="width: 95%;border-top: 1px solid darkslategray"></div>')
+                            $notificationsList.prepend('<div class="mx-auto" style="width: 95%;border-top: 1px solid darkslategray"></div>')
                         }
                     });
                 },
@@ -599,8 +634,73 @@
             });
         });
 
+        $('#notificationsDelete').click(function () {
+            $.ajax({
+                url: '/delete/notifications',
+                method: 'GET',
+                success: function (){
+                    $('#notificationsList').empty();
+                },
+                error: function(xhr, status, error){
+                    console.error('AJAX 오류:', status, error);
+                }
+            })
+        });
+
+
     })
     // document.ready
+
+    function findNotificationPage(notifications){
+        $.ajax({
+            url: '/find/notifications/page',
+            method: 'POST',
+            data: {
+                notifications: notifications
+            },
+            success: function (response){
+                let parse = JSON.parse(response);
+                if (parse.post !== undefined && parse.post !== null) {
+                    window.location.href = "/post?id=" + parse.post;
+                }
+                if (parse.sender !== undefined && parse.sender !== null) {
+                    $('#v-pills-likey-tab').removeClass('active').attr('aria-selected', 'false');
+                    $('#v-pills-message-tab').addClass('active').attr('aria-selected', 'true');
+                    $('#v-pills-likey').removeClass('show').removeClass('active');
+                    $('#v-pills-message').addClass('show').addClass('active');
+                    loadMsgOnTab();
+                }
+                if (parse.follower !== undefined && parse.follower !== null) {
+                    window.location.href = "/profile?id=" + parse.follower;
+                }
+            },
+            error: function (xhr, status, error){
+                console.error('AJAX 오류:', status, error);
+            }
+        })
+    }
+
+
+    function loadNotifications() {
+        $.ajax(
+            $.ajax({
+                url: '/find/notifications/count',
+                method: 'GET',
+                success: function (response){
+                    if (response !== null && response !== '') {
+                        $('#notificationCount').show().text(response.toString());
+                        console.log(response);
+                    }else{
+                        $('#notificationCount').hide();
+                        console.log(response);
+                    }
+                },
+                error: function(xhr, status, error){
+                    console.error('AJAX 오류:', status, error);
+                }
+            })
+        )
+    }
 
     // offcanvas post req
     $(document).on('click', '[data-bs-toggle="offcanvas"]', function() {
@@ -612,14 +712,11 @@
         let targetUserId = $('#' + targetId).text().trim();
         let imageSrc = $('#' + targetId).find('img').attr('src');
 
-
         $('#msguserpic').empty().append('<div class="mx-3" style="font-size: x-large">' +
             '<img src="' + imageSrc + '" alt="" style="border-radius: 70%;width: 30px;height:30px">' +
             '<span id="msgtargetuser" class="mx-2">'+targetUserId+'</span>' +
             '</div>');
 
-        // 이제 messageText를 사용하여 REST API 요청을 보낼 수 있습니다.
-        // 예를 들어, REST API 요청을 보내고 응답을 처리하는 코드를 작성합니다.
         loadMsg(targetUserId);
         targetGlobalName = targetUserId;
 
@@ -652,6 +749,34 @@
         $('#postPicInput').removeAttr('hidden').val('');
         $('#postPicDeleteBtn').attr('hidden','hidden');
     });
+
+    function loadMsgOnTab(){
+        $.ajax({
+            url: '/find/myfollowing',
+            method: 'GET',
+            success: function (response) {
+                let followingList = response;
+                let $messageList = $('#messageList');
+                $messageList.empty();
+                followingList.forEach((following, index, array) => {
+                    let messageUserId = 'messageUser-' + index;
+                    $messageList.append('<div id="' + messageUserId + '" class="messageUser my-4 h4" style="display: flex;justify-content: space-between;align-content: start">' +
+                        '<div><a style="color: white;text-decoration: none" href="profile?id=' + following.userId + '">' +
+                        '<img class="mx-2" src="' + following.userPic + '" style="border-radius: 70%;width: 40px;height: 40px">' +
+                        '<span>' + following.userName + '</span></a></div>' +
+                        '<div><a href="#" style="color: white;text-decoration: none" data-bs-toggle="offcanvas" data-bs-target="#v-offcanvas-message" aria-controls="v-offcanvas-message" data-target-id="' + messageUserId + '"><i class="fa-solid fa-message"></i></a></div>' +
+                        '</div>');
+                    if (index !== array.length - 1) {
+                        $messageList.append('<div class="mx-auto" style="width: 95%;border-top: 1px solid darkslategray"></div>')
+                    }
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX 오류:', status, error);
+            }
+        });
+    }
+
 
     // Send Message
     function sendMsg(text, targetId) {

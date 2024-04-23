@@ -1,10 +1,12 @@
 package com.jsy.clonegram.dao;
 
+import com.jsy.clonegram.repository.listener.CommentListener;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Data
+@EntityListeners(CommentListener.class)
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -33,22 +33,18 @@ public class SseEmitterService {
 
         emitter.onCompletion(() -> emitters.remove(userid));
 
-//        log.info(emitters.toString());
         return emitter;
     }
 
     public SseEmitter getEmitter(Long userId) {
-//        log.info(emitters.toString());
         return emitters.get(userId);
     }
 
     public Boolean isEmitterActive(Long userId) {
-//        log.info(emitters.toString());
         return emitters.containsKey(userId);
     }
 
     public void removeEmitter(Long userId) {
         emitters.remove(userId);
-//        log.info(emitters.toString());
     }
 }

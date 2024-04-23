@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +63,31 @@ public class RedisService {
         } catch (Exception e) {
             log.info("redis delete error", e);
         }
+    }
+
+    public void setNotifications(String userName){
+        String notificationCount = redisTemplate.opsForValue().get(userName + "_notification");
+        if (notificationCount == null) {
+            redisTemplate.opsForValue().set(userName + "_notification", "1");
+        }else {
+            int count = Integer.parseInt(Objects.requireNonNull(redisTemplate.opsForValue().get(userName + "_notification")));
+            redisTemplate.opsForValue().set(userName + "_notification", String.valueOf(++count));
+        }
+    }
+
+    public void deleteNotifications(String userName){
+        try{
+            redisTemplate.delete(userName + "_notification");
+        }catch (Exception e){
+            log.info("redis delete error", e);
+        }
+    }
+    public Long getNotificationCount(String userName){
+        String s = redisTemplate.opsForValue().get(userName + "_notification");
+        if (s == null) {
+            return null;
+        }
+        return Long.parseLong(s);
     }
 
     public void setFollower(Long userId, Long followerSize){

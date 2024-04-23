@@ -26,7 +26,6 @@ public class MyLogoutSuccessHandler implements LogoutSuccessHandler {
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-//        log.info(principal.getUsername());
         sseEmitterService.removeEmitter(userService.getUserIdByName(principal.getUsername()) );
         response.sendRedirect("/login");
     }

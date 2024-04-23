@@ -15,27 +15,37 @@ public class FollowService {
 
     private final RedisService redisService;
     private final UserRepository userRepository;
+    private final NotificationsService notificationsService;
 
     public void followUser(Long followerId, Long followingId){
         Follow follow = new Follow();
         follow.setFollowerId(followerId);
         follow.setUserId(followingId);
+
         userRepository.followUser(follow);
+
         Long followingSize = (long) userRepository.findFollowingsByUserId(followerId).size(); // findfollowings (나를팔로잉하는사람을찾음)
         Long followerSize = (long) userRepository.findFollowersByUserId(followingId).size(); //
+
         log.info("followingsize = {}",followingSize);
         log.info("followerize = {}",followerSize);
+
         redisService.setFollower(followingId,followerSize);
         redisService.setFollowing(followerId,followingSize);
+
+        notificationsService.notifyFollow(follow);
     }
 
     public void unfollowUser(Long followerId, Long followingId){
         Follow follow = new Follow();
         follow.setUserId(followingId);
         follow.setFollowerId(followerId);
+
         userRepository.unfollowUser(follow);
+
         Long followingSize = (long)userRepository.findFollowingsByUserId(followerId).size();
         Long followerSize = (long)userRepository.findFollowersByUserId(followingId).size();
+
         redisService.setFollower(followingId, followerSize);
         redisService.setFollowing(followerId, followingSize);
     }

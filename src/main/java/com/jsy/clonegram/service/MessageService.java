@@ -72,7 +72,7 @@ public class MessageService {
                 String jsonData = objectMapper.writeValueAsString(jsonMap);
 
                 // SSEEmitter로 데이터 전송
-                sseEmitter.send(SseEmitter.event().data(jsonData, MediaType.APPLICATION_JSON));
+                sseEmitter.send(SseEmitter.event().data(jsonData, MediaType.APPLICATION_JSON).id("message"));
             } catch (IOException e) {
                 log.info("receiveMsg Error :",e);
             }

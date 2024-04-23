@@ -59,7 +59,7 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(withDefaults -> withDefaults
-                        .logoutSuccessHandler(logoutSuccessHandler));    // 로그아웃은 기본설정으로 (/logout으로 인증해제)
+                        .logoutSuccessHandler(logoutSuccessHandler));
 
         return http.build();
     }
