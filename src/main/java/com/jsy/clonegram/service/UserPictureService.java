@@ -3,17 +3,19 @@ package com.jsy.clonegram.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
-import com.jsy.clonegram.dao.Post;
 import com.jsy.clonegram.dao.User;
+import com.jsy.clonegram.dto.PicUrlDto;
 import com.jsy.clonegram.dto.UserUpdateDto;
 import com.jsy.clonegram.repository.JpaPostRepository;
 import com.jsy.clonegram.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -37,7 +39,6 @@ public class UserPictureService {
                 .quality("80"))
                 .generate("images/" + usernameOnSession + "/" + usernameOnSession + "_pic");
         // force_version이 적용 안 됨
-//        log.info("img = {}",image);
         UserUpdateDto userUpdateDto = new UserUpdateDto();
         userUpdateDto.setProfileImageUrl(image);
         userService.updateUser(userService.getUserIdOnSession(), userUpdateDto);
@@ -52,7 +53,6 @@ public class UserPictureService {
                         .quality("80"))
                 .generate("images/" + userName + "/" + userName + "_pic");
         // force_version이 적용 안 됨
-//        log.info("img = {}",image);
         return image;
     }
 
@@ -64,7 +64,6 @@ public class UserPictureService {
                         .height("200"))
                         .generate("images/" + usernameOnSession + "/" + usernameOnSession + "_pic");
 
-//        log.info("img = {}",image);
         return image;
     }
 
@@ -75,7 +74,6 @@ public class UserPictureService {
                         .height("200"))
                 .generate("images/" + userName + "/" + userName + "_pic");
 
-//        log.info("img = {}",image);
         return image;
     }
 
@@ -86,7 +84,6 @@ public class UserPictureService {
                         .height("400"))
                 .generate("images/" + userName + "/" + userName + "_pic");
 
-//        log.info("img = {}",image);
         return image;
     }
 
@@ -97,6 +94,8 @@ public class UserPictureService {
                         .height("30"))
                         .generate("images/" + userName + "/" + userName + "_pic");
     }
+
+    @Transactional
     public String getProfileById(Long userId){
         Optional<User> byId = userRepository.findById(userId);
         String userName = byId.get().getUserName();
@@ -107,6 +106,7 @@ public class UserPictureService {
                 .generate("images/" + userName + "/" + userName + "_pic");
     }
 
+    @Transactional
     public String getMidSizeProfileById(Long userId){
         Optional<User> byId = userRepository.findById(userId);
         String userName = byId.get().getUserName();
@@ -117,6 +117,7 @@ public class UserPictureService {
                 .generate("images/" + userName + "/" + userName + "_pic");
     }
 
+    @Transactional
     public String getPostSizePicById(Long postId){
         Long userIdByPostId = jpaPostRepository.findUserIdByPostId(postId);
         Optional<User> byId = userRepository.findById(userIdByPostId);
@@ -130,6 +131,19 @@ public class UserPictureService {
         return null;
     }
 
+    public boolean updatePostPicture(MultipartFile file, Long postId) {
+        Map map = ObjectUtils.asMap("public_id", "PostPic", "folder", "post/" + postId);
+        try{
+            Map upload = cloudinary.uploader().upload(file.getBytes(), map);
+            String version = upload.get("version").toString();
+            log.info("version = {}",version);
+            redisService.setVersion(version, "postId_" + postId);
+            return true;
+        }catch (Exception e){
+            log.info("updatePost Error : ",e);
+        }
+        return false;
+    }
 
     public void setPostPicture(MultipartFile file, Long postId){
         try {
@@ -144,8 +158,6 @@ public class UserPictureService {
         try {
             Map upload = cloudinary.uploader().upload(file.getBytes(), map);
             String version = upload.get("version").toString();
-//            log.info("version ={}",version);
-//            log.info("uploadfile = {}",upload);
             redisService.setVersion(version, "postId_"+postId);
             //버전 따로 저장해야함
         } catch (IOException e) {
@@ -163,28 +175,37 @@ public class UserPictureService {
             throw new RuntimeException(e);
         }
 
-//        try {
-//            ApiResponse apiResponse = cloudinary.api().deleteResources(List.of("images/" + usernameOnSession + "/" + usernameOnSession + "_pic"),
-//                    ObjectUtils.emptyMap());
-//            log.info("delete response = {}", apiResponse);
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-        // 자동으로 위에 덮어쓰기가 되어서 삭제 안 해도 됨
-
         Map map = ObjectUtils.asMap(
                 "public_id", usernameOnSession + "_pic",
                 "folder", "images/" + usernameOnSession);
         try {
             Map upload = cloudinary.uploader().upload(file.getBytes(), map);
             String version = upload.get("version").toString();
-//            log.info("version ={}",version);
-//            log.info("uploadfile = {}",upload);
             redisService.setVersion(version, usernameOnSession);
             //버전 따로 저장해야함
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public PicUrlDto getPicUrlDto(){
+        PicUrlDto picUrlDto = new PicUrlDto();
+        picUrlDto.setMiniPic(getMiniPicUrl());
+        picUrlDto.setProfilePic(getProfilePicUrl());
+        return picUrlDto;
+    }
+
+    public boolean deletePostPicture(Long postId){
+        try {
+            Iterable<String> strings = List.of(new String[]{"post/"+postId+"/PostPic"});
+            cloudinary.api().deleteResources(strings,ObjectUtils.emptyMap());
+            cloudinary.api().deleteFolder("post/" + postId, ObjectUtils.emptyMap());
+            redisService.deleteVersion(String.valueOf(postId));
+            return true;
+        } catch (Exception e) {
+            log.info("deletePostPicture Error : ",e);
+        }
+        return false;
     }
 
 }

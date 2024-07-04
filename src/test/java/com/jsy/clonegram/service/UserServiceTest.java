@@ -1,13 +1,13 @@
 package com.jsy.clonegram.service;
 
 import com.jsy.clonegram.dao.Grade;
+import com.jsy.clonegram.dao.User;
 import com.jsy.clonegram.dto.UserCreateDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Slf4j
@@ -27,5 +27,12 @@ class UserServiceTest {
 
         log.info("user = {}", user);
 
+    }
+
+    @Test
+    void getUser(){
+        User userById = service.getUserById(11L);
+
+        log.info("userById = {}", userById);
     }
 }

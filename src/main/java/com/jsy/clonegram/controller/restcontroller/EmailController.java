@@ -4,6 +4,7 @@ import com.jsy.clonegram.dto.CodeRequestDto;
 import com.jsy.clonegram.dto.EmailRequestDto;
 import com.jsy.clonegram.dto.DefaultMessageDto;
 import com.jsy.clonegram.service.EmailService;
+import com.jsy.clonegram.service.ValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,15 +16,20 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class EmailController {
 
-    private final EmailService service;
-
+    private final EmailService emailService;
+    private final ValidationService validationService;
 
     @PostMapping("/sendEmail")
     public DefaultMessageDto sendEmail(@RequestBody EmailRequestDto req) {
         try {
-            service.sendAuthEmail(req.getEmail());
-            return new DefaultMessageDto("success");
+            if (validationService.getValidateEmail(req.getEmail())) {
+                emailService.sendAuthEmail(req.getEmail());
+                return new DefaultMessageDto("success");
+            }else {
+                return new DefaultMessageDto("duplicate");
+            }
         } catch (Exception e) {
+            log.info("send email error", e);
             return new DefaultMessageDto("fail");
         }
     }
@@ -31,10 +37,10 @@ public class EmailController {
     @PostMapping("/checkCode")
     public DefaultMessageDto checkCode(@RequestBody CodeRequestDto req) {
         try {
-            Boolean b = service.checkCode(req.getEmail(), req.getCode());
+            Boolean b = emailService.checkCode(req.getEmail(), req.getCode());
             if (b) {
                 return new DefaultMessageDto("success");
-            }else {
+            } else {
                 return new DefaultMessageDto("fail");
             }
         } catch (Exception e) {

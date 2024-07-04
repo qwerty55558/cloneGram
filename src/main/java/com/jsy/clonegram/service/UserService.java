@@ -12,9 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Principal;
-import java.security.Security;
 import java.util.Optional;
 
 /**
@@ -26,21 +25,25 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository rep;
+    private final UserRepository userRepository;
 
     @Autowired
     PasswordEncoder encoder;
 
+    public String encodePassword(String rawPassword) {
+        return encoder.encode(rawPassword);
+    }
 
+    @Transactional
     public Boolean createUser(UserCreateDto user){
 
-        Optional<User> byName = rep.findByName(user.getUserName());
+        Optional<User> byName = userRepository.findByName(user.getUserName());
         if (byName.isEmpty()) {
             String encode = encoder.encode(user.getPassword());
             user.setPassword(encode);
             user.setGrade(Grade.Bronze);
 
-            rep.save(user);
+            userRepository.save(user);
 
             return true;
         }
@@ -48,15 +51,17 @@ public class UserService {
         return false;
     }
 
+    @Transactional
     public Boolean updateUser(User user, UserUpdateDto dto) {
         dto.setTargetId(user.getId());
-        rep.update(dto);
+        userRepository.update(dto);
         return true;
     }
 
+    @Transactional
     public Boolean updateUser(Long userId, UserUpdateDto dto){
         dto.setTargetId(userId);
-        rep.update(dto);
+        userRepository.update(dto);
         return true;
     }
 
@@ -65,18 +70,48 @@ public class UserService {
         return principal.getUsername();
     }
 
+    @Transactional
     public Long getUserIdOnSession(){
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = principal.getUsername();
-        Optional<User> byName = rep.findByName(username);
+        Optional<User> byName = userRepository.findByName(username);
         if (byName.isPresent()) {
             return byName.get().getId();
         }
         return -1L;
     }
 
+    @Transactional
     public Long getUserIdByName(String userName) {
-        Optional<User> byName = rep.findByName(userName);
+        Optional<User> byName = userRepository.findByName(userName);
         return byName.map(User::getId).orElse(null);
     }
+
+    @Transactional
+    public User getUserBySession(){
+        Optional<User> byId = userRepository.findById(getUserIdOnSession());
+        return byId.orElse(null);
+    }
+
+    @Transactional
+    public String getUserNameByUserId(Long userId) {
+        Optional<User> byId = userRepository.findById(userId);
+        return byId.map(User::getUserName).orElse(null);
+    }
+
+    @Transactional
+    public Optional<User> getUserByUserName(String userName) {
+        return userRepository.findByName(userName);
+    }
+
+    @Transactional
+    public User getUserById(Long userId){
+        return userRepository.findById(userId).orElse(null);
+    }
+
+    @Transactional
+    public Optional<User> getUserByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
+
 }

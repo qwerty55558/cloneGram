@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home</title>
+    <th:block th:replace="~{home::header}"></th:block>
+    <style>
+        .centerpanel{
+            background: black;
+            color: white;
+            width: 80%;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .centerpanel::-webkit-scrollbar{
+            display: none;
+        }
+
+        .sidepanel{
+            width: 10%;
+        }
+
+        .link-text{
+            color: white;
+            text-decoration: none;
+        }
+
+        .video-container{
+            text-align: center;
+        }
+
+        .video-container video{
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        #updateQuill::-webkit-scrollbar{
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+<!-- html data -->
+<section class="vh-100 d-flex justify-content-between" style="background: black">
+    <div class="sidepanel">
+        <div class="me-auto ms-3 mt-3" style="width: fit-content">
+            <a th:href="@{/home(tab=profile)}"><i id="redirect-profile-btn" class="fa-solid fa-arrow-left fa-3x" style="color:white;text-decoration:none"></i></a>
+        </div>
+    </div>
+    <div class="centerpanel" aria-orientation="horizontal">
+        <div id="videopanel" class="row my-3" style="height: fit-content;width: 90%;justify-content: center">
+        </div>
+        <div id="loadspinner" class="mx-auto" style="width: 10%"><i class="fa-solid fa-spinner fa-spin-pulse fa-3x mx-auto"></i></div>
+        <div id="observerunit" style="width: 100%;height: 200px"></div>
+    </div>
+    <div class="sidepanel"></div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="updateModal"  tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background: black;border: 1px white solid;color: white">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="updateModalLabel">수정하기</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="updateQuill" style="border: none;height: 100px;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="captionUpdate()">Save changes</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- html data-->
+<th:block th:replace="~{home::footer}"></th:block>
+<script>
+    let pageNum = 0;
+    let loadSign = true;
+
+    let observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting){
+                if (loadSign){
+                    $('#loadspinner').show();
+                    setTimeout(function () {
+                        loadReels();
+                    }, 300);
+                }
+            }
+        })
+    });
+
+    const option = {
+        theme: 'snow',
+        modules: {
+            toolbar: false
+        }
+    };
+
+    let uQuill = new Quill('#updateQuill', option);
+
+    let observeUnit = document.getElementById("observerunit");
+    observer.observe(observeUnit);
+
+    $(document).ready(function () {
+        $('#loadspinner').hide();
+    });
+
+    function loadReels(){
+        $.ajax({
+            url: 'myreels/list',
+            method: 'POST',
+            data: {
+                pageNum: pageNum
+            },
+            success: function (response) {
+                if (!response || !response.content || response.content.length === 0) {
+                    loadSign = false;
+                }
+                if (loadSign) {
+                    response.content.forEach((video, index, array) => {
+                        $('#videopanel').append('<div class="mx-1 my-1 card bg-black text-white border-white col-lg-5 col-md-11 col-sm-11 video-container">' +
+                            '<video class="card-header" controls loop>' +
+                            '<source src="video/' + video.id + '" type="video/mp4">' +
+                            '</video>' +
+                            '<span id="'+video.id+'_caption" class="card-body" ">'+video.caption+'</span>' +
+                            '<p class="card-footer" style="display: flex;justify-content: end">' +
+                            '<a href="#" class="link-text mx-1" onclick="videoUpdate('+video.id+')"><i class="fa-solid fa-pen-to-square fa-xl"></i></a>' +
+                            '<a href="#" class="link-text mx-1" onclick="videoDelete('+video.id+')"><i class="fa-solid fa-xmark fa-xl"></i></a>' +
+                            '</p>' +
+                            '</div>');
+                    });
+                    pageNum++;
+                }
+            },
+            error: function (xhr, status, error){
+                $('#loadspinner').hide();
+            },
+            complete: function (){
+                $('#loadspinner').hide();
+            }
+
+        })
+    }
+
+    function videoUpdate(id) {
+        if (confirm("캡션을 업데이트 하시겠습니까?")) {
+            let modal = new bootstrap.Modal(document.getElementById('updateModal'));
+            let caption = document.getElementById(id + "_caption").textContent;
+            uQuill.setText(caption);
+            document.getElementById('updateModal').setAttribute('data-user-id', id);
+            modal.toggle(modal);
+        }else{
+
+        }
+    }
+
+    function videoDelete(id){
+        if (confirm("비디오를 삭제 하시겠습니까?")) {
+            reelsDelete(id);
+        }else{
+
+        }
+    }
+
+    function captionUpdate(){
+        let plainTextFromQuill = getPlainTextFromQuill(uQuill);
+        let id = $('#updateModal').data('user-id');
+        $.ajax({
+            url: "video/update",
+            method: "POST",
+            data: {
+                caption : plainTextFromQuill,
+                videoId : id
+            },
+            success: function (response){
+                if(response){
+                    alert("성공적으로 캡션을 수정하였습니다.");
+                }else{
+                    alert("캡션 수정 중 오류가 발생했습니다.");
+                }
+            },
+            error: function (){
+                alert("캡션 수정 중 오류가 발생했습니다.");
+            },
+            complete: function (){
+                window.location.reload();
+            }
+        })
+    }
+
+    function reelsDelete(id){
+        $.ajax({
+            url: "video/delete",
+            method: "POST",
+            data: {
+                videoId: id
+            },
+            success: function (response) {
+                if(response){
+                    alert("성공적으로 삭제하였습니다.");
+                }else{
+                    alert("삭제 과정 중 오류가 발생했습니다.");
+                }
+            },
+            error: function (){
+                alert("삭제 과정 중 오류가 발생했습니다.");
+            },
+            complete: function (){
+                window.location.reload();
+            }
+        })
+    }
+
+    function getPlainTextFromQuill(quill) {
+        // Quill 에디터에서 Delta 형식의 객체를 가져옵니다.
+        const delta = quill.getContents();
+
+        // Delta를 사용하여 텍스트를 원시 텍스트로 변환합니다.
+        const rawText = delta.reduce((text, op) => {
+            if (typeof op.insert === 'string') {
+                return text + op.insert;
+            }
+            return text;
+        }, '');
+
+        // 줄 바꿈 문자를 제거하고 반환합니다.
+        return rawText.replace(/\n/g, '');
+    }
+
+
+
+</script>
+</body>
+</html>

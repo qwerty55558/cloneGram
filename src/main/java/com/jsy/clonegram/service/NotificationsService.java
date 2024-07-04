@@ -8,20 +8,20 @@ import com.jsy.clonegram.repository.PostRepository;
 import com.jsy.clonegram.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
+import org.springframework.context.annotation.AdviceMode;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
 public class NotificationsService {
     private final JpaNotificationsRepository jpaNotificationsRepository;
     private final UserRepository userRepository;
@@ -32,6 +32,7 @@ public class NotificationsService {
     private final ObjectMapper objectMapper;
     private final PageReturnService pageReturnService;
 
+    @Transactional
     public void notifyMessage(Message message){
         Optional<User> user = userRepository.findById(message.getSenderId());
         if (user.isPresent()){
@@ -50,6 +51,7 @@ public class NotificationsService {
         }
     }
 
+    @Transactional
     public void notifyLikey(Likey likey) {
         Notifications notifications = new Notifications();
         Optional<Post> post = postRepository.findById(likey.getPostId());
@@ -69,6 +71,7 @@ public class NotificationsService {
         }
     }
 
+    @Transactional
     public void notifyComment(Comment comment){
         Notifications notifications = new Notifications();
         Optional<User> user = userRepository.findById(comment.getUserId());
@@ -85,9 +88,11 @@ public class NotificationsService {
         }
     }
 
+    @Transactional
     public void notifyFollow(Follow follow){
         Notifications notifications = new Notifications();
         Optional<User> user = userRepository.findById(follow.getFollowerId());
+        log.info("follow = {}", follow);
         if(user.isPresent()){
             notifications.setMessage(user.get().getUserName() + "님이 회원님을 팔로우 하기 시작했습니다.");
             notifications.setUserId(follow.getUserId());
@@ -100,20 +105,25 @@ public class NotificationsService {
         }
     }
 
+    @Transactional
     public void getNotificationsCount(Long targetId){
         try {
             Optional<User> byId = userRepository.findById(targetId);
-            if (byId.isPresent() && emitterService.getEmitter(targetId) != null) {
-                SseEmitter emitter = emitterService.getEmitter(targetId);
-                Long notificationCount = redisService.getNotificationCount(byId.get().getUserName());
-                String countNotify = objectMapper.writeValueAsString(notificationCount);
-                emitter.send(SseEmitter.event().data(countNotify, MediaType.APPLICATION_JSON).id("notifications_count"));
+            if (byId.isPresent()) {
+                SseEmitter notificationsEmitter = emitterService.getNotificationsEmitter(targetId);
+                if (notificationsEmitter != null) {
+                    Long notificationCount = redisService.getNotificationCount(byId.get().getUserName());
+                    String countNotify = objectMapper.writeValueAsString(notificationCount);
+                    notificationsEmitter.send(countNotify);
+                }
+
             }
         }catch (IOException e){
             log.info("getNotificationsCount error",e);
         }
     }
 
+    @Transactional
     public List<Notifications> getNotifications(){
         List<Notifications> notifications = jpaNotificationsRepository.findAllByUserId(userService.getUserIdOnSession());
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
@@ -128,16 +138,19 @@ public class NotificationsService {
     }
 
 
+    @Transactional
     public Long getNotificationsCount(){
         Optional<User> byId = userRepository.findById(userService.getUserIdOnSession());
         return byId.map(user -> redisService.getNotificationCount(user.getUserName())).orElse(null);
     }
 
+    @Transactional
     public void deleteNotificationsCount(){
         redisService.deleteNotifications(userService.getUsernameOnSession());
         getNotificationsCount(userService.getUserIdOnSession());
     }
 
+    @Transactional
     public void deleteNotifications(){
         List<Notifications> allByUserId = jpaNotificationsRepository.findAllByUserId(userService.getUserIdOnSession());
         if (!allByUserId.isEmpty()){
@@ -145,6 +158,8 @@ public class NotificationsService {
         }
     }
 
+
+    @Transactional
     // message: 0, likey: 1, comment: 2, follow: 3
     public String findNotificationsPage(Long Id){
         Optional<Notifications> byId = jpaNotificationsRepository.findById(Id);

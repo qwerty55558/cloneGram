@@ -67,7 +67,11 @@
 <body>
 <!-- html data -->
 <section class="vh-100 d-flex justify-content-between" style="background: black">
-    <div class="sidepanel"></div>
+    <div class="sidepanel">
+        <div class="me-auto ms-3 mt-3" style="width: fit-content">
+            <a th:href="@{/home}"><i id="redirect-profile-btn" class="fa-solid fa-arrow-left fa-3x" style="color:white;text-decoration:none"></i></a>
+        </div>
+    </div>
     <div class="centerpanel" aria-orientation="horizontal">
         <div class="row pt-5" style="width:100%;height: 30%">
             <div class="col-xl-4 col-lg-5 col-md-6 col-sm-6 ">
@@ -81,8 +85,10 @@
                             <button class="btn btn-outline-dark profilebtn text-white" id="unfollowuser" th:if="${follow.getFollowCheck()}">언팔로우하기</button>
                             <button class="btn btn-outline-dark profilebtn text-white" id="followuser" th:unless="${follow.getFollowCheck()}">팔로우하기</button>
                         </div>
-                        <div class="col-4 profileitem"></div>
-                        <div class="col-1 profileitem"><i class="fa-solid fa-gear fa-lg"></i></div>
+                        <div class="col-4 profileitem">
+                            <button class="btn btn-outline-dark profilebtn text-white" id="videoList" onclick="reelsPage()">업로드한 릴스</button>
+                        </div>
+                        <div class="col-1 profileitem"></div>
                     </div>
                 </div>
                 <div class="col-4" style="width: 100%">
@@ -114,14 +120,19 @@
 </section>
 <!-- html data-->
 <th:block th:replace="~{home::footer}"></th:block>
-<script>
-    let targetId
+<script th:inline="javascript">
+    let targetId;
+
     $(document).ready(function () {
         let searchParams = new URLSearchParams(window.location.search);
         if (searchParams !== null) {
             targetId = searchParams.get('id');
         }
     });
+
+    function reelsPage(){
+        location.href = /*[[@{reels(id=${user.getId()})}]]*/'';
+    }
 
 
     $('#followuser').click(function (){

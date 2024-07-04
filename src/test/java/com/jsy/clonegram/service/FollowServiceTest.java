@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Slf4j
@@ -24,7 +23,7 @@ class FollowServiceTest {
 
     @Test
     void checkFollowStatus() {
-        followService.followUser(2L,3L);
+//        followService.followUser(2L,3L);
         Optional<Follow> first = userRepository.findFollowingsByUserId(2L).stream().filter(c -> c.getUserId().equals(3L)).findFirst();
         log.info("first = {}",first);
     }

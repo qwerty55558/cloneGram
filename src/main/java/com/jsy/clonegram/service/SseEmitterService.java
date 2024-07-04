@@ -1,5 +1,6 @@
 package com.jsy.clonegram.service;
 
+import com.jsy.clonegram.dao.EmitterType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,36 +16,58 @@ public class SseEmitterService {
 
     private final UserService userService;
 
-    private final Map<Long, org.springframework.web.servlet.mvc.method.annotation.SseEmitter> emitters = new ConcurrentHashMap<>();
+    private final Map<String, org.springframework.web.servlet.mvc.method.annotation.SseEmitter> emitters = new ConcurrentHashMap<>();
 
-    public SseEmitter newEmitter() {
-        Long userIdOnSession = userService.getUserIdOnSession();
-        return getSseEmitter(userIdOnSession);
-    }
+    public SseEmitter newSseEmitter(Long userid, String type) {
+        SseEmitter emitter = new SseEmitter();
 
-    public SseEmitter newEmitter(Long userid){
-        return getSseEmitter(userid);
-    }
+        emitter.onCompletion(() -> emitters.remove(userid + "_" + type));
+        emitter.onTimeout(() -> emitters.remove(userid + "_" + type));
+        emitter.onError(throwable -> emitters.remove(userid + "_" + type));
 
-    private SseEmitter getSseEmitter(Long userid) {
-        SseEmitter emitter = new SseEmitter(0L);
+        emitters.put(userid + "_" + type, emitter);
 
-        emitters.put(userid, emitter);
-
-        emitter.onCompletion(() -> emitters.remove(userid));
+        log.info("emitters = {}", emitters);
 
         return emitter;
     }
 
-    public SseEmitter getEmitter(Long userId) {
-        return emitters.get(userId);
+    public SseEmitter newSseEmitter(String type) {
+        return newSseEmitter(userService.getUserIdOnSession(), type);
     }
 
-    public Boolean isEmitterActive(Long userId) {
-        return emitters.containsKey(userId);
+    public SseEmitter getMessagesEmitter(Long targetId) {
+        return emitters.get(targetId + "_" + "messages");
     }
 
-    public void removeEmitter(Long userId) {
-        emitters.remove(userId);
+    public SseEmitter getMessagesEmitter() {
+        return emitters.get(userService.getUserIdOnSession() + "_" + EmitterType.MESSAGE.getType());
+    }
+
+    public SseEmitter getNotificationsEmitter(Long targetId) {
+        return emitters.get(targetId + "_" + "notifications");
+    }
+
+    public SseEmitter getNotificationsEmitter() {
+        return emitters.get(userService.getUserIdOnSession() + "_" + EmitterType.NOTIFICATION.getType());
+    }
+
+    public void deleteMessagesEmitter() {
+        SseEmitter sseEmitter = emitters.get(userService.getUserIdOnSession() + "_" + EmitterType.MESSAGE.getType());
+        sseEmitter.complete();
+        log.info("sseEmitterdeleteMsg = {}", sseEmitter);
+    }
+
+    public void deleteNotificationsEmitter() {
+        SseEmitter sseEmitter = emitters.get(userService.getUserIdOnSession() + "_" + EmitterType.NOTIFICATION.getType());
+        sseEmitter.complete();
+        log.info("sseEmitterdeleteNotify = {}", sseEmitter);
+    }
+
+    public void deleteAllEmitter(Long userId) {
+        if (getMessagesEmitter(userId) != null || getNotificationsEmitter(userId) != null) {
+            getNotificationsEmitter(userId).complete();
+            getMessagesEmitter(userId).complete();
+        }
     }
 }

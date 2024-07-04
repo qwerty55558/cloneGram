@@ -1,25 +1,13 @@
 package com.jsy.clonegram.controller;
 
-import com.jsy.clonegram.dao.Post;
-import com.jsy.clonegram.dao.User;
-import com.jsy.clonegram.dto.FollowSetDto;
-import com.jsy.clonegram.dto.PicUrlDto;
-import com.jsy.clonegram.repository.PostRepository;
-import com.jsy.clonegram.repository.UserRepository;
-import com.jsy.clonegram.service.FollowService;
-import com.jsy.clonegram.service.UserPictureService;
+import com.jsy.clonegram.dao.Constants;
+import com.jsy.clonegram.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * home으로 get 요청이 오면 `home` 페이지를 보여준다.
@@ -31,38 +19,32 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class HomeController {
 
-    private final UserRepository userRepository;
-    private final UserPictureService pic;
-    private final PostRepository postRepository;
     private final FollowService followService;
+    private final PostService postService;
+    private final UserService userService;
+    private final UserPictureService userPictureService;
 
-    @GetMapping({"/","/home"})
+    @Value("${VIDEO.URL}")
+    private String videoUrl;
+
+    @Value("${FILE.MAXSIZE}")
+    private Integer fileMaxSize;
+
+    @Value("${POST.CAPTIONSIZE}")
+    private Integer postCaptionSize;
+
+    @GetMapping({"/", "/home"})
     public String homeController(Model model) {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = principal.getUsername();
-        Optional<User> byName = userRepository.findByName(username);
-        if (byName.isPresent()) {
-            List<Post> postsById = postRepository.findPostsById(byName.get().getId());
 
-            PicUrlDto picUrlDto = new PicUrlDto();
-            picUrlDto.setMiniPic(pic.getMiniPicUrl());
-            picUrlDto.setProfilePic(pic.getProfilePicUrl());
+        model.addAttribute("follow", followService.getFollowSet());
+        model.addAttribute("user", userService.getUserBySession());
+        model.addAttribute("picurl", userPictureService.getPicUrlDto());
+        model.addAttribute("posts", postService.getPosts());
+        model.addAttribute("videoPath", videoUrl);
+        model.addAttribute("fileMaxSize", fileMaxSize * Constants.FILE_MAX_SIZE);
+        model.addAttribute("postCaptionSize", postCaptionSize);
 
-            FollowSetDto followSetDto = new FollowSetDto();
-
-            followSetDto.setFollower(followService.getFollowerCount(byName.get().getId()));
-            followSetDto.setFollowing(followService.getFollowingCount(byName.get().getId()));
-
-//            log.info("Follow = {}",followSetDto.toString());
-
-            model.addAttribute("follow", followSetDto);
-            model.addAttribute("user", byName.get());
-            model.addAttribute("picurl", picUrlDto);
-            model.addAttribute("posts", postsById);
-            return "home";
-        }
-
-        return "redirect:/login";
+        return "home";
     }
 
 

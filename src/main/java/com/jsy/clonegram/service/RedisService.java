@@ -40,12 +40,20 @@ public class RedisService {
         redisTemplate.opsForValue().set(id,"success");
     }
 
-    public void setDuplicated(String id){
-        redisTemplate.opsForValue().set(id, "fail");
-    }
+//    public void setDuplicated(String id){
+//        redisTemplate.opsForValue().set(id, "fail");
+//    }
 
     public String getDuplicationCheckId(String id){
         return redisTemplate.opsForValue().get(id);
+    }
+
+    public void setDuplicationCheckEmail(String email){
+        redisTemplate.opsForValue().set(email, "success");
+    }
+
+    public String getDuplicationCheckEmail(String email){
+        return redisTemplate.opsForValue().get(email);
     }
 
     public void setVersion(String version, String name){
@@ -56,6 +64,13 @@ public class RedisService {
         return redisTemplate.opsForValue().get(username + "_pic");
     }
 
+    public void deleteVersion(String postId){
+        try {
+            redisTemplate.delete("postId_" + postId + "_pic");
+        } catch (Exception e) {
+            log.info("deleteVersion error : ",e);
+        }
+    }
 
     public void deleteRecordByString(String Info){
         try {

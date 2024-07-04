@@ -20,7 +20,7 @@
         values (#{userName}, #{password}, #{Email}, #{grade.code});
     </insert>
 
-    <insert id="followUser" parameterType="Follow">
+    <insert id="followUser" parameterType="Follow" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO follow (user_id, follower_id)
         values (#{userId}, #{followerId});
     </insert>
@@ -29,6 +29,12 @@
         select user_id, username, password, email, full_name, bio, profile_image_url, grade
         from user
         where user_id = #{id}
+    </select>
+
+    <select id="findByEmail" resultMap="userMap">
+        select user_id, username, password, email, full_name, bio, profile_image_url, grade
+        from user
+        where email = #{email}
     </select>
 
     <delete id="delete" parameterType="int">
@@ -40,14 +46,14 @@
     <update id="updateUser" parameterType="UserUpdateDto">
         UPDATE user
         <set>
-            <if test="Email != null"> email = #{Email},</if>
+            <if test="email != null"> email = #{email},</if>
             <if test="password != null"> password = #{password},</if>
             <if test="fullName != null"> full_name = #{fullName},</if>
             <if test="bio != null"> bio = #{bio},</if>
             <if test="profileImageUrl != null"> profile_image_url = #{profileImageUrl},</if>
             <if test="grade != null"> grade = #{grade.code}</if>
         </set>
-        WHERE user_id = #{TargetId}
+        WHERE user_id = #{targetId}
     </update>
 
 

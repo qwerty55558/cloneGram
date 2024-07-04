@@ -127,6 +127,10 @@
         display: inline-block;
     }
 
+    #vquill::-webkit-scrollbar{
+        display: none;
+    }
+
     @media(max-width: 900px){
         .side-bar-right{
             display: none;
@@ -180,14 +184,16 @@
         <div class="nav flex-column nav-pills mx-3 vh-100" id="v-pills-tab" role="tablist" aria-orientation="vertical">
             <a class="nav-item" th:href="@{/home}"><img src="/images/logo.webp" style="max-width: 100%" alt=""></a>
             <a class="nav-item-text" th:href="@{/home}"><i class="fa-brands fa-instagram fa-3x me-3"></i></a>
-            <button class="btn btn-outline-dark navbtn text-white active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true"><i class="fa-solid fa-house me-3"></i><span class="btnText">홈</span></button>
+            <button class="btn btn-outline-dark navbtn text-white active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true"><i class="fa-solid fa-house me-3"></i><span class="btnText" th:text="#{home.home}"></span></button>
             <button class="btn btn-outline-dark navbtn text-white" id="v-pills-who-tab" data-bs-toggle="pill" data-bs-target="#v-pills-who" type="button" role="tab" aria-controls="v-pills-who" aria-selected="false"><i class="fa-solid fa-magnifying-glass me-3"></i><span class="btnText">검색</span></button>
             <button class="btn btn-outline-dark navbtn text-white" id="v-pills-search-tab" data-bs-toggle="pill" data-bs-target="#v-pills-search" type="button" role="tab" aria-controls="v-pills-search" aria-selected="false"><i class="fa-solid fa-compass me-3"></i><span class="btnText">탐색 탭</span></button>
             <button class="btn btn-outline-dark navbtn text-white" id="v-pills-video-tab" data-bs-toggle="pill" data-bs-target="#v-pills-video" type="button" role="tab" aria-controls="v-pills-video" aria-selected="false"><i class="fa-solid fa-camera-retro me-3"></i><span class="btnText">릴스</span></button>
             <button class="btn btn-outline-dark navbtn text-white" id="v-pills-message-tab" data-bs-toggle="pill" data-bs-target="#v-pills-message" type="button" role="tab" aria-controls="v-pills-message" aria-selected="false"><i class="fa-solid fa-location-arrow me-3"></i><span class="btnText">메시지</span></button>
             <button class="btn btn-outline-dark navbtn text-white" id="v-pills-likey-tab" data-bs-toggle="pill" data-bs-target="#v-pills-likey" type="button" role="tab" aria-controls="v-pills-likey" aria-selected="false"><i class="fa-regular fa-heart me-3"></i><span class="btnText">알림</span><span id="notificationCount" class="notification-count mx-1"></span></button>
             <button class="btn btn-outline-dark navbtn text-white" id="v-pills-create-tab" data-bs-toggle="pill" data-bs-target="#v-pills-create" type="button" role="tab" aria-controls="v-pills-create" aria-selected="false"><i class="fa-regular fa-square-plus me-3"></i><span class="btnText">만들기</span></button>
+            <button th:if="${#strings.equals(user.grade,'Admin')}" class="btn btn-outline-dark navbtn text-white" onclick="goToDashboard()" type="button"><i class="fa-solid fa-chart-line me-3"></i><span class="btnText">대시보드</span></button>
             <button class="btn btn-outline-dark navbtn text-white" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false"><img class="me-3" th:src="${picurl.miniPic}" style="width: 35px; height: 35px; object-fit: cover;border-radius: 70%;"><span class="btnText">프로필</span></button>
+
             <div class="btn-group dropup mt-auto mb-3">
                 <button class="btn btn-outline-dark navbtn text-white dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" type="button"><i class="fa-solid fa-bars me-3" ></i><span class="btnText">더 보기</span></button>
                 <ul class="dropdown-menu" style="background: black;border: 1px darkslategray solid">
@@ -198,8 +204,12 @@
     </div>
     <div class="main-content-center tab-content" id="v-pills-tabContent">
         <div class="tab tab-pane fade panels show active " id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab" tabindex="0" aria-orientation="horizontal" >
-            <div class="pan" style="width: 80%; display: flex; justify-content: center; align-items: start; flex-direction: column;">
+            <div class="pan" style="width: 100%; display: flex; justify-content: center; align-items: start; flex-direction: column;">
+                <div id="homeposts" class="content mx-auto row" style="width: 80%;">
 
+                </div>
+                <div id="homeloadspinner" class="mx-auto" style="width: 10%"><i class="fa-solid fa-spinner fa-spin-pulse fa-3x mx-auto"></i></div>
+                <div id="homeobserverunit" style="width: 100%;height: 200px"></div>
             </div>
         </div>
         <div class="tab tab-pane fade panels" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab" tabindex="1" aria-orientation="horizontal">
@@ -212,7 +222,7 @@
                         <div class="row">
                             <div class="col-3 profileitem" style="font-weight: bold;font-size: larger" th:text="${user.getUserName()}"></div>
                             <div class="col-4 profileitem"><button class="btn btn-outline-dark profilebtn text-white" onclick="goToProfileEditPage()">프로필 편집</button></div>
-                            <div class="col-4 profileitem"><button class="btn btn-outline-dark profilebtn text-white">보관된 스토리 보기</button> </div>
+                            <div class="col-4 profileitem"><button class="btn btn-outline-dark profilebtn text-white" onclick="goTomyReels()">보관된 릴스 보기</button> </div>
                             <div class="col-1 profileitem"><i class="fa-solid fa-gear fa-lg"></i></div>
                         </div>
                     </div>
@@ -348,9 +358,62 @@
                 </div>
             </div>
         </div>
+        <div class="tab tab-pane fade panels" id="v-pills-video" role="tabpanel" aria-labelledby="v-pills-video-tab" tabindex="6" aria-orientation="horizontal">
+            <div class="pan justify-content-between" style="display: flex">
+                <div id="videoPanel" style="width: 80%;justify-content: center">
+                    <video controls autoplay loop class="my-3" id="videoPlayer" style="width: 100%;">
+                        <source id="videoSource" src="" type="video">
+                        릴스가 존재하지 않습니다.
+                    </video>
+                    <div id="videoCaption" class="justify-content-center d-flex" style="width: 100%">
+                    </div>
+                    <div class="justify-content-between d-flex" style="width: 100%">
+                        <a href="#!" style="color: white;text-decoration: none" onclick="previousVideo()"><i class="fa-solid fa-arrow-left fa-2x"></i></a>
+                        <a href="#!" style="color: white;text-decoration: none" onclick="nextvideo()"> <i class="fa-solid fa-arrow-right fa-2x"></i></a>
+                    </div>
+                </div>
+                <div style="width: 20%">
+                    <div class="ms-auto me-3 mt-3" style="width: fit-content">
+                        <a id="videoCreateBtn" href="#!" data-bs-toggle="modal" data-bs-target="#videoModal"><i id="redirect-profile-btn" class="fa-regular fa-square-plus fa-2x" style="color:white;text-decoration:none"></i></a>
+                    </div>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true" >
+                    <div class="modal-dialog">
+                        <div class="modal-content" style="background: black;color: white;border: white 1px solid">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="videoModalLabel">릴스 만들기</h1>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p><label for="videoUpload">Upload a video:</label></p>
+                                <input type="file" id="videoUpload" name="video" accept="video/*">
+                            </div>
+                            <div id="vquill" style="height: 80px;">
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" id="videoUploadBtn">Upload</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab tab-pane fade panels" id="v-pills-search" role="tabpanel" aria-labelledby="v-pills-search-tab" tabindex="7" aria-orientation="horizontal">
+            <div class="pan justify-content-between" style="display: flex">
+                <div id="ollamaPanel" class="mt-4" style="width: 80%;justify-content: center;align-content: end;height: 90vh">
+                    <div id="chatPanel" style="width: 100%">
+                        인공지능을 활용한 통신 추가 예정
+                    </div>
+                    <div id="oquill" style="width: 100%;height: 50px;border-radius: 10px">
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="side-bar-right">
-        qwer
+    <div class="side-bar-right" style="justify-content: end">
     </div>
 </section>
 
@@ -365,41 +428,23 @@
 
 </th:block>
 <script th:inline="javascript">
-    const maxSize = 1024 * 1024;
-    const captionSize = 500;
-    const eventSource = new EventSource('/find/emitter');
-    let quill;
+    const videoUrlPrefix = /*[[${videoPath}]]*/ '';
+
+    const maxSize = /*[[${fileMaxSize}]]*/ '';
+    const captionSize = /*[[${postCaptionSize}]]*/ '';
+    let quill
     let squill;
-    let pageNum = 0;
+    let vquill;
+    let oquill;
+    let postsPageNum = 0;
+    let recommendedPageNum = 0;
     let msgNum = 0;
     let targetGlobalName = '';
     let outofindexsign = false;
 
-    eventSource.onmessage = function (event){
-        let parse = JSON.parse(event.data);
-        let eventId = event.lastEventId;
-        if (eventId === 'message') {
-            const messagesDiv = $('#messageContent');
-            console.log(parse);
-            if (parse.userName === $('#msgtargetuser').text()) {
-                messagesDiv.append('<div class="me-auto msgtext">' + parse.message + '</div>');
-                setTimeout(function () {
-                    scrollToBottom($('#messagepane')[0]);
-                }, 300);
-            }
-        }
-        if (eventId === 'notifications_count') {
-            const notificationsDiv = $('#notificationCount');
-            console.log(parse);
-            if (parse !== null) {
-                notificationsDiv.show();
-                notificationsDiv.text(parse);
-            }else{
-                notificationsDiv.hide();
-            }
-        }
+    let videoPageNum = 0;
 
-    }
+    notificationEmitterLoad();
 
 
     // quill keyBindings
@@ -409,7 +454,7 @@
             handler: function (){
                 let plainTextFromQuill = getPlainTextFromQuill(squill);
                 $('#postscontent').empty();
-                pageNum = 0;
+                postsPageNum = 0;
                 loadPosts(plainTextFromQuill);
                 return false;
             }
@@ -423,6 +468,15 @@
             key: 'Enter',
             handler: function (){
                 messagefunc();
+                return false;
+            }
+        }
+    }
+
+    const ollamaKeybindings ={
+        list:{
+            key: 'Enter',
+            handler: function (){
                 return false;
             }
         }
@@ -473,14 +527,24 @@
                     }
                 }
             }
+            if (entry.target.id === 'homeobserverunit'){
+                if (entry.isIntersecting){
+                    $('#homeloadspinner').show();
+                    setTimeout(function () {
+                        findHomePage();
+                    }, 300);
+                }
+            }
         });
     });
 
     // Observer Data Set
     let targetdiv = document.getElementById('observerunit');
     let targetmsgdiv = document.getElementById('messagetop');
+    let homeobserverunit = document.getElementById('homeobserverunit');
     observer.observe(targetdiv);
     observer.observe(targetmsgdiv);
+    observer.observe(homeobserverunit);
 
 
 
@@ -489,11 +553,21 @@
         window.location.href = /*[[@{/profile/edit}]]*/ "";
     }
 
+    function goTomyReels(){
+        window.location.href = /*[[@{/myreels}]]*/ '';
+    }
+
+    function goToDashboard() {
+        window.location.href = /*[[@{/dashboard}]]*/ '';
+    }
+
 
 
     // Document.ready
     $(document).ready(function () {
         loadNotifications();
+        findHomePage();
+        $('#homeloadspinner').hide();
 
 
         // 파라미터 확인
@@ -505,6 +579,12 @@
                 $('#v-pills-profile-tab').addClass('active').attr('aria-selected', 'true');
                 $('#v-pills-home').removeClass('show').removeClass('active');
                 $('#v-pills-profile').addClass('show').addClass('active');
+            }
+            if (enableTab === 'reels') {
+                $('#v-pills-home-tab').removeClass('active').attr('aria-selected', 'false');
+                $('#v-pills-video-tab').addClass('active').attr('aria-selected', 'true');
+                $('#v-pills-home').removeClass('show').removeClass('active');
+                $('#v-pills-video').addClass('show').addClass('active');
             }
 
         }
@@ -534,9 +614,20 @@
                 }
             }
         }
+        const optionForOquill ={
+            theme: 'snow',
+            modules: {
+                toolbar: false,
+                keyboard: {
+                    bindings: ollamaKeybindings
+                }
+            }
+        }
         quill = new Quill('#editor',option);
         squill = new Quill('#searchbar', optionForSquill);
         msquill = new Quill('#msquill', optionForMsquill);
+        vquill = new Quill('#vquill', option);
+        oquill = new Quill('#oquill', optionForOquill);
 
 
         // file upload
@@ -601,6 +692,10 @@
             });
         });
 
+        $('#videoModal').on('show.bs.modal', function (e) {
+            resetUploadVideoForm();
+        });
+
 
         $('#v-pills-who-tab').on('show.bs.tab', function (e) {
             loadPosts()
@@ -647,9 +742,212 @@
             })
         });
 
+        $('#v-pills-home-tab').on('show.bs.tab', function (e) {
+            findHomePage();
+        });
+
+        $('#v-pills-video-tab').on('show.bs.tab', function (e) {
+            videoLoad();
+        });
+
+        $('#v-pills-video-tab').on('hidden.bs.tab', function (e) {
+            $('#videoPlayer')[0].pause();
+        });
+
 
     })
     // document.ready
+
+    // video upload
+    $('#videoUploadBtn').on('click', function () {
+        uploadVideo();
+    });
+
+
+    // offcanvas msg req
+    $(document).on('click', '[data-bs-toggle="offcanvas"]', function() {
+        msgNum = 0;
+        $('#messageContent').empty();
+        // 클릭된 a 태그의 data-target-id 속성을 가져옵니다.
+        let targetId = $(this).data('target-id');
+        // 해당하는 messageUser의 텍스트를 가져옵니다.
+        let targetUserId = $('#' + targetId).text().trim();
+        let imageSrc = $('#' + targetId).find('img').attr('src');
+
+        $('#msguserpic').empty().append('<div class="mx-3" style="font-size: x-large">' +
+            '<img src="' + imageSrc + '" alt="" style="border-radius: 70%;width: 30px;height:30px">' +
+            '<span id="msgtargetuser" class="mx-2">'+targetUserId+'</span>' +
+            '</div>');
+
+        loadMsg(targetUserId);
+        targetGlobalName = targetUserId;
+
+        messageEmitterLoad();
+
+        // 메시지를 불러온 후에 스크롤을 최하단으로 이동합니다.
+        setTimeout(function () {
+            scrollToBottom($('#messagepane')[0]);
+        }, 500);
+    });
+
+    $('#v-offcanvas-message').on('hidden.bs.offcanvas', function () {
+    });
+
+    function nextvideo(){
+        videoPageNum++;
+        videoLoad();
+    }
+
+    function previousVideo(){
+        videoPageNum--;
+        videoLoad();
+    }
+
+    // video load
+    function videoLoad(){
+        $.ajax({
+            url: "/video/list",
+            method: 'POST',
+            data: {
+                pageNum: videoPageNum
+            },
+            success: function (response){
+                if (!response || !response.content || response.content.length === 0) {
+                    alert('더 이상 로드할 릴스가 없습니다.');
+                    videoPageNum = 0;
+                    videoLoad();
+                    return;
+                }
+                response.content.forEach((video, index, array) => {
+                        $('#videoPlayer').attr('src', 'video/' + video.id);
+                        $('#videoPlayer')[0].load();
+                        $('#videoCaption').empty().append('<a href="/profile?id=' + video.userId + '" style="color: white;text-decoration: none">'+video.caption+'</a>');
+                    }
+                );
+            }
+        })
+    }
+
+    function uploadVideo(){
+        let input = document.getElementById("videoUpload");
+        let formData = new FormData();
+        formData.append('file', input.files[0]);
+        formData.append('caption', getPlainTextFromQuill(vquill));
+
+        $.ajax({
+            url: "/video/upload",
+            method: 'POST',
+            data: formData,
+            processData: false,  // Prevent jQuery from automatically transforming the data into a query string
+            contentType: false,  // Ensure the request is sent as a multipart/form-data request
+            success: function (response){
+                alert("정상적으로 업로드 되었습니다.");
+                window.location.reload();
+            },
+            error: function (xhr, status, error) {
+                console.error('Upload failed:', status, error);
+                alert("정상적으로 업로드 되지 않았습니다. 파일을 확인해주세요");
+            }
+        });
+    }
+
+    function resetUploadVideoForm() {
+        $('#videoUpload').val('');
+        vquill.setText('');
+    }
+
+
+    function messageEmitterLoad() {
+        const messageEventsource = new EventSource("/find/emitter/messages");
+
+        messageEventsource.onmessage = function (event) {
+            let parse = JSON.parse(event.data);
+            const messagesDiv = $('#messageContent');
+            console.log(parse);
+            if (parse.userName === $('#msgtargetuser').text()) {
+                messagesDiv.append('<div class="me-auto msgtext">' + parse.message + '</div>');
+                setTimeout(function () {
+                    scrollToBottom($('#messagepane')[0]);
+                }, 300);
+            }
+        };
+    }
+
+    function notificationEmitterLoad() {
+        const notificationsEventsource = new EventSource('/find/emitter/notifications');
+
+        notificationsEventsource.onmessage = function(event) {
+            let parse = JSON.parse(event.data);
+            const notificationsDiv = $('#notificationCount');
+            console.log(parse);
+            if (parse !== null && parse !== '') {
+                notificationsDiv.show();
+                notificationsDiv.text(parse);
+            } else {
+                notificationsDiv.hide();
+            }
+        };
+    }
+
+    // 스크롤을 최하단으로 이동하는 함수
+    function scrollToBottom(targetElement) {
+        targetElement.scrollTop = targetElement.scrollHeight;
+    }
+
+    function findHomePage() {
+        $.ajax({
+            url: 'find/posts/recommended',
+            method: 'POST',
+            data: {
+                recommendedPageNum: recommendedPageNum
+            },
+            success: function (response) {
+                let recommended = response;
+                let $homeList = $('#homeposts');
+                if (!recommended) {
+                    return;
+                }
+                recommended.content.forEach((rec, index, array) => {
+                    let randCommentContent;
+                    if (rec.randComment.content === "" || rec.randComment.content === null) {
+                        randCommentContent = "댓글이 존재하지 않습니다.";
+                    }else{
+                        randCommentContent = rec.randComment.content;
+                    }
+
+                    let cardHTML = `<div class="card my-5 mx-4" style="width: 80%;background: black;color: white;border: 1px solid darkslategray">
+                            <img class="card-img-top mt-4 mb-2 me-4 img-fluid" src="${rec.postPic}" alt="...">
+                            <div class="card-body">
+                                <p style="text-align: end"><i class="fa-solid fa-heart me-2" style="color: red;"></i>${rec.likeyCount}</p>
+                                <a href="/profile?id=${rec.creatorName}" style="color: white;text-decoration: none"><h5 class="card-title">
+                                    <img src="${rec.creatorPic}" style="border-radius: 70%">
+                                    ${rec.creatorName}
+                                </h5></a>
+                                <p class="card-text"><a href="/post?id=${rec.postId}" style="color: white;text-decoration: none">${rec.caption}</a></p>
+                            </div>
+                            <div class="card-footer" style="background: black;color: white">
+                                <p><a href="/post?id=${rec.postId}" style="color: white;text-decoration: none"><i class="fa-regular fa-comment-dots fa-2xl me-2"></i>Comment</a></p>
+                                <div style="width: 100%;border: 1px darkslategray solid;border-radius: 10px">
+                                    <p class="mx-2 my-2"><a href="/post?id=${rec.postId}" style="color: white;text-decoration: none">${randCommentContent}</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    $homeList.append(cardHTML);
+                });
+
+                recommendedPageNum++;
+            },
+            error: function () {
+                $('#homeloadspinner').hide();
+            },
+            complete: function () {
+                $('#homeloadspinner').hide();
+            }
+        });
+    }
+
 
     function findNotificationPage(notifications){
         $.ajax({
@@ -700,35 +998,6 @@
                 }
             })
         )
-    }
-
-    // offcanvas post req
-    $(document).on('click', '[data-bs-toggle="offcanvas"]', function() {
-        msgNum = 0;
-        $('#messageContent').empty();
-        // 클릭된 a 태그의 data-target-id 속성을 가져옵니다.
-        let targetId = $(this).data('target-id');
-        // 해당하는 messageUser의 텍스트를 가져옵니다.
-        let targetUserId = $('#' + targetId).text().trim();
-        let imageSrc = $('#' + targetId).find('img').attr('src');
-
-        $('#msguserpic').empty().append('<div class="mx-3" style="font-size: x-large">' +
-            '<img src="' + imageSrc + '" alt="" style="border-radius: 70%;width: 30px;height:30px">' +
-            '<span id="msgtargetuser" class="mx-2">'+targetUserId+'</span>' +
-            '</div>');
-
-        loadMsg(targetUserId);
-        targetGlobalName = targetUserId;
-
-        // 메시지를 불러온 후에 스크롤을 최하단으로 이동합니다.
-        setTimeout(function () {
-            scrollToBottom($('#messagepane')[0]);
-        }, 500);
-    });
-
-    // 스크롤을 최하단으로 이동하는 함수
-    function scrollToBottom(targetElement) {
-        targetElement.scrollTop = targetElement.scrollHeight;
     }
 
     function scrollDownSlightly() {
@@ -860,7 +1129,7 @@
                 method: 'POST',
                 data: {
                     cond : text,
-                    pageNum: pageNum
+                    pageNum: postsPageNum
                 },
                 success: function (response){
                     let condposts = response;
@@ -871,7 +1140,7 @@
                             '  <a href="post?id='+post.id+'"><img src='+post.imageUrl+' class="card-img-top" alt="..."></a>\n' +
                             ' </div>')
                     });
-                    pageNum += 1;
+                    postsPageNum += 1;
                 },
                 error: function(xhr, status, error) {
                     console.error('AJAX 오류:', status, error);
@@ -906,16 +1175,21 @@
         let fileInput = document.getElementById("postPicInput");
         let file = fileInput.files[0];
         if (file.size > maxSize) {
-            const image = new Image();
-            image.src = URL.createObjectURL(file);
-            image.onload = function() {
-                const downsampledFile = downsampleImage(image, 500, 500);
-                formData.append('file', downsampledFile);
-                sendFormData(formData);
-            };
+            alert("파일 사이즈는 " + (maxSize/1024)/1024 + "(MB) 보다 크면 안 됩니다.");
         } else {
-            formData.append('file', file);
-            sendFormData(formData);
+            if (file.size > (maxSize / 2)) {
+                console.log("다운사이징 진행")
+                const image = new Image();
+                image.src = URL.createObjectURL(file);
+                image.onload = function() {
+                    const downsampledFile = downsampleImage(image, 500, 500);
+                    formData.append('file', downsampledFile);
+                    sendFormData(formData);
+                };
+            }else{
+                formData.append('file', file);
+                sendFormData(formData);
+            }
         }
     }
 

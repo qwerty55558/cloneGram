@@ -57,6 +57,10 @@
                 height: 300px;
             }
         }
+        .link-text{
+            color: white;
+            text-decoration: none;
+        }
         @media (max-width: 600px) {
             .fa-arrow-left{
                 font-size: large;
@@ -70,9 +74,17 @@
     <div class="side-left"><a href="/home?tab=profile" style="text-decoration: none;color: inherit"><i class="fa-solid fa-arrow-left fa-3x my-3 mx-3"></i></a></div>
     <div class="main-content-center">
         <div class="card text-center mt-5" style="max-width: 630px">
-            <div class="card-header text-start">
-                <img class="mx-2" th:src="${picMap.get(post.getUserId())}" style="border-radius: 70%;width: 50px;height: 50px">
-                <span th:text="${usernameMap.get(post.getUserId())}" style="font-weight: bold;font-size: large"></span>
+            <div class="card-header justify-content-between">
+                <div class="text-start">
+                    <a th:href="@{/profile(id=${post.getUserId()})}" style="color: white;text-decoration: none">
+                        <img class="mx-2" th:src="${picMap.get(post.getUserId())}" style="border-radius: 70%;width: 50px;height: 50px">
+                        <span th:text="${usernameMap.get(post.getUserId())}" style="font-weight: bold;font-size: large"></span>
+                    </a>
+                </div>
+                <div th:if="${mine}" class="text-end">
+                    <a href="#" class="link-text mx-1" onclick="updatePost()"><i class="fa-solid fa-pen-to-square fa-xl"></i></a>
+                    <a href="#" class="link-text mx-1" onclick="deletePost()"><i class="fa-solid fa-xmark fa-xl"></i></a>
+                </div>
             </div>
             <div class="card-body">
                 <img th:src="${post.getImageUrl()}" class="mx-5 my-3 imgpanel">
@@ -81,7 +93,7 @@
                     <a id="Xheart" href="" style="color: red;text-decoration: none" onclick="likeyReqSend('O')"><i class="fa-regular fa-heart fa-2x"></i></a>
                     <a id="Oheart" href="" style="color: red;text-decoration: none" onclick="likeyReqSend('X')"><i class="fa-solid fa-heart fa-2x"></i></a>
                 </div>
-                <p class="card-text text-start" style="word-wrap: break-word"><span class="me-2" th:text="${usernameMap.get(post.getUserId())}"style="font-weight: bold;"></span><span th:text="${post.getCaption()}"></span></p>
+                <p class="card-text text-start" style="word-wrap: break-word"><span class="me-2" th:text="${usernameMap.get(post.getUserId())}"style="font-weight: bold;"></span><span id="postCaption" th:text="${post.getCaption()}"></span></p>
 
             </div>
             <div class="card-footer text-start">
@@ -96,8 +108,12 @@
 
                 <div class="commentPanel" th:each="comment : ${comments}" style="width: 100%;height: fit-content">
                     <div class="mx-2 mb-3 row" style="width: 100%;border-bottom: darkslategray;border-width: 1px;">
-                        <img class="col-lg-2 mt-3" th:src="${picMap.get(comment.getUserId())}" style="width: 80px;height: 56px;border-radius: 70%;justify-content: center;align-content: start" alt="">
-                        <div class="col-lg-2 mt-3" th:text="${usernameMap.get(comment.getUserId())}" style="font-weight: bold;justify-content: center"></div>
+                        <a class="col-lg-2 mt-3" th:href="@{/profile(id=${comment.getUserId()})}" style="text-decoration: none;color: white;align-content: start;justify-content: center">
+                            <img th:src="${picMap.get(comment.getUserId())}" style="width: 80px;height: 56px;border-radius: 70%;justify-content: center;align-content: start" alt="">
+                        </a>
+                        <a class="col-lg-2 mt-3" th:href="@{/profile(id=${comment.getUserId()})}" style="text-decoration: none;color: white;justify-content: center">
+                            <div th:text="${usernameMap.get(comment.getUserId())}" style="font-weight: bold;justify-content: center"></div>
+                        </a>
                         <div class="col-lg-8 mt-3" th:text="${comment.getContent()}"></div>
                     </div>
                 </div>
@@ -106,13 +122,41 @@
         </div>
     </div>
     <div class="side-right" style="width: 30px"></div>
+    <!-- Modal -->
+    <div class="modal fade" id="updateModal"  tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background: black;border: 1px white solid;color: white">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="updateModalLabel">수정하기</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="postPicImg" hidden="hidden" style="width: 150px;height: 150px">
+                    <input type="file" id="postPicInput" accept="image/*">
+                    <p></p>
+                    <button id="postPicDeleteBtn" class="btn btn-dark" hidden="hidden">사진 삭제</button>
+                    <div id="updateQuill" style="border: none;height: 100px;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="sendUpdateReq()">Save changes</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 <!-- html data-->
 <th:block th:replace="~{home::footer}"></th:block>
 <script th:inline="javascript">
     const postId = new URLSearchParams(window.location.search).get("id");
-    const maxCommentLength = 255;
+    const maxSize = /*[[${fileMaxSize}]]*/ '';
+    const captionSize = /*[[${postCaptionSize}]]*/ '';
+
     let quill;
+    let uQuill;
+
+    let imageData = new FormData();
+
     let currentUrl = new URL(window.location.href);
     let searchParams = new URLSearchParams(currentUrl.search);
     let paramValue = searchParams.get('id');
@@ -125,6 +169,45 @@
             }
         }
         quill = new Quill('#editor', option);
+        uQuill = new Quill('#updateQuill', option);
+
+        document.getElementById('postPicInput').addEventListener('change', function (event) {
+            // fileElement를 가져오는 올바른 방법
+            let fileElement = this.files[0];
+
+            // fileElement가 존재하는지 확인
+            if (fileElement) {
+                // 파일 크기 비교
+                if (fileElement.size > maxSize) {
+                    alert("파일 사이즈는 " + (maxSize/1024)/1024 + "(MB) 보다 크면 안 됩니다.");
+                    $('#postPicInput').val('');
+                    return;
+                } else {
+                    if (fileElement.size > (maxSize / 2)) {
+                        const image = new Image();
+                        image.src = URL.createObjectURL(fileElement);
+                        image.onload = function () {
+                            const sampleImage = downsampleImage(image, 500, 500);
+                            imageData.append('file', sampleImage);
+                        }
+                    }else{
+                        imageData.append('file', fileElement);
+                    }
+                }
+
+                // 미리보기 이미지 설정
+                $("#postPicImg").attr('src', URL.createObjectURL(fileElement)).removeAttr('hidden');
+                $('#postPicInput').attr('hidden', 'hidden');
+                $('#postPicDeleteBtn').removeAttr('hidden');
+            }
+        });
+
+        // Pic delete Btn
+        $('#postPicDeleteBtn').click(function () {
+            $('#postPicImg').attr('hidden','hidden');
+            $('#postPicInput').removeAttr('hidden').val('');
+            $('#postPicDeleteBtn').attr('hidden','hidden');
+        });
 
         likeyInfoSend();
     });
@@ -175,8 +258,8 @@
 
     function sendCommentFormData(formData) {
         let text = quill.getText();
-        if (text.length > maxCommentLength) {
-            alert("글이 255자를 넘으면 안 됩니다.");
+        if (text.length > captionSize) {
+            alert("글이 "+captionSize+" 자를 넘으면 안 됩니다.");
             return;
         }
         formData.append('comment',text);
@@ -195,6 +278,134 @@
                 console.error("Error : ", error);
             });
     }
+
+
+    function updatePost(){
+        let modal = new bootstrap.Modal(document.getElementById('updateModal'));
+        let caption = document.getElementById("postCaption").textContent;
+        uQuill.setText(caption);
+        // document.getElementById('updateModal').setAttribute('data-user-id', id);
+        modal.toggle(modal);
+    }
+
+    function deletePost(){
+        if (confirm("정말 포스트를 삭제하시겠습니까?")){
+            $.ajax({
+                url: "delete/post",
+                method: "POST",
+                data: {
+                    postid: postId
+                },
+                success: function (response){
+                    if (!response || !response.content || response.content.length === 0 ){
+                        alert("성공적으로 포스트를 삭제하였습니다.");
+                        window.location.href = /*[[@{/home(tab=profile)}]]*/ '';
+                    }else{
+                        alert("삭제 중 에러가 발생했습니다.");
+                    }
+                },
+                error: function (){
+                    alert("삭제 중 에러가 발생했습니다.");
+                }
+            })
+        }else {
+
+        }
+    }
+
+    function sendUpdateReq(){
+        let caption = getPlainTextFromQuill(uQuill);
+        imageData.append("postid", postId);
+        imageData.append("caption", caption);
+        $.ajax({
+            url: "update/post",
+            method: "POST",
+            data: imageData,
+            processData: false, // FormData를 처리하지 않도록 설정
+            contentType: false, // ContentType을 자동으로 설정하지 않도록 설정
+            success: function (response) {
+                if (!response || !response.content || response.content.length === 0) {
+                    alert("성공적으로 포스트를 업데이트 하였습니다.");
+                    window.location.reload();
+                } else {
+                    alert("업로드 중 에러가 발생했습니다.");
+                }
+            },
+            error: function () {
+                alert("업로드 중 에러가 발생했습니다.");
+            },
+            complete: function () {
+                imageData = new FormData(); // imageData 초기화
+            }
+        });
+    }
+
+    function checkFileSize(file){
+        if (file.size > maxSize) {
+            alert("이미지의 크기가 너무 큽니다.");
+            $("#postPicInput").val('');
+        }else{
+            blob = file;
+            return file;
+        }
+    }
+
+    function getPlainTextFromQuill(quill) {
+        // Quill 에디터에서 Delta 형식의 객체를 가져옵니다.
+        const delta = quill.getContents();
+
+        // Delta를 사용하여 텍스트를 원시 텍스트로 변환합니다.
+        const rawText = delta.reduce((text, op) => {
+            if (typeof op.insert === 'string') {
+                return text + op.insert;
+            }
+            return text;
+        }, '');
+
+        // 줄 바꿈 문자를 제거하고 반환합니다.
+        return rawText.replace(/\n/g, '');
+    }
+
+    function downsampleImage(image, maxWidth, maxHeight) {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // 이미지 크기 설정
+        let width = image.width;
+        let height = image.height;
+
+        // 이미지 크기를 maxWidth 및 maxHeight에 맞게 조정
+        if (width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+        }
+        if (height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
+        }
+
+        // Canvas 크기 설정
+        canvas.width = width;
+        canvas.height = height;
+
+        // Canvas에 이미지 그리기
+        ctx.drawImage(image, 0, 0, width, height);
+
+        return dataURLtoBlob(canvas.toDataURL('image/jpeg')); // 다운샘플링된 이미지를 Blob으로 반환
+    }
+
+    function dataURLtoBlob(dataURL) {
+        const byteString = atob(dataURL.split(',')[1]);
+        const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+        const arrayBuffer = new ArrayBuffer(byteString.length);
+        const uint8Array = new Uint8Array(arrayBuffer);
+        for (let i = 0; i < byteString.length; i++) {
+            uint8Array[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([arrayBuffer], { type: mimeString });
+    }
+
+
 
 
 </script>

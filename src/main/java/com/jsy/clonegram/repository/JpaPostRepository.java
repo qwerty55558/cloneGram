@@ -8,19 +8,21 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 @Slf4j
-@Transactional
+@EnableTransactionManagement
+@Transactional(readOnly = true)
 public class JpaPostRepository implements PostRepository {
     private final EntityManager em;
 
@@ -30,6 +32,7 @@ public class JpaPostRepository implements PostRepository {
     }
 
 
+    @Transactional
     @Override
     public Post save(Post post) {
         em.persist(post);
@@ -71,8 +74,8 @@ public class JpaPostRepository implements PostRepository {
 
     @Override
     public List findWithPagination(Integer pageSize) {
-        String sql = "SELECT * FROM Post ORDER BY RAND() LIMIT :pageSize";
-        return em.createNativeQuery(sql, Post.class)
+        String sql = "SELECT p FROM Post p ORDER BY RAND() LIMIT :pageSize";
+        return em.createQuery(sql, Post.class)
                 .setParameter("pageSize", pageSize)
                 .getResultList();
 
@@ -80,14 +83,13 @@ public class JpaPostRepository implements PostRepository {
 
     @Override
     public List findPosts(Integer pageSize, String cond) {
-        String sql = "SELECT * FROM Post WHERE LOWER(caption) LIKE LOWER(:cond) LIMIT :pageSize";
-        return em.createNativeQuery(sql, Post.class)
+        String sql = "SELECT p FROM Post p WHERE LOWER(caption) LIKE LOWER(:cond) LIMIT :pageSize";
+        return em.createQuery(sql, Post.class)
                 .setParameter("cond", "%" + cond + "%")
                 .setParameter("pageSize", pageSize)
                 .getResultList();
     }
 
-    @Transactional
     @Override
     public Page<Post> findPosts(Pageable pageable, String cond) {
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
@@ -96,7 +98,7 @@ public class JpaPostRepository implements PostRepository {
 
         query.select(from);
 
-        if(cond != null && !cond.isEmpty()) {
+        if (cond != null && !cond.isEmpty()) {
             Predicate keywordPredicate = criteriaBuilder.like(criteriaBuilder.lower(from.get("caption")), "%" + cond.toLowerCase() + "%");
             query.where(keywordPredicate);
         }
@@ -115,7 +117,7 @@ public class JpaPostRepository implements PostRepository {
         // count 쿼리를 생성합니다. 기존의 CriteriaQuery를 재활용하여 select 절을 수정합니다.
         CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
         Root<Post> countRoot = countQuery.from(Post.class);
-        if(cond != null && !cond.isEmpty()) {
+        if (cond != null && !cond.isEmpty()) {
             countQuery.select(criteriaBuilder.count(countRoot)).where(criteriaBuilder.like(criteriaBuilder.lower(countRoot.get("caption")), "%" + cond.toLowerCase() + "%"));
         } else {
             countQuery.select(criteriaBuilder.count(countRoot));
@@ -125,7 +127,6 @@ public class JpaPostRepository implements PostRepository {
         return new PageImpl<>(resultList, pageable, singleResult);
     }
 
-    @Transactional
     @Override
     public Page<Post> findPosts(Pageable pageable) {
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();

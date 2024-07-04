@@ -21,32 +21,105 @@
         .sidepanel{
             width: 10%;
         }
+
+        .custom-input {
+            background-color: black;
+            color: white; /* 텍스트 색상 */
+            border: darkslategray 1px solid;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .custom-file-input{
+            background-color: black;
+            color: #495057; /* 텍스트 색상 */
+            margin-bottom: 10px;
+        }
+
+        #bioInput:focus{
+            border-color: white; /* 포커스를 받았을 때 테두리 색상 변경 */
+            background-color: black; /* 포커스를 받았을 때 배경색 변경 */
+            color: white; /* 포커스를 받았을 때 텍스트 색상 변경 */
+            cursor: text; /* 텍스트 입력 커서로 변경 */
+            outline: none; /* 포커스 표시 제거 */
+        }
+        #bioInput::-webkit-scrollbar {
+            display: none;
+        }
     </style>
 </head>
 <body>
 <!-- html data -->
-<section class="vh-100 d-flex justify-content-between" style="background: black">
-    <div class="sidepanel"></div>
+<section class="vh-100 d-flex justify-content-between" style="background: black;color: white">
+    <div class="sidepanel">
+        <div class="me-auto ms-3 mt-3" style="width: fit-content">
+            <a th:href="@{/?tab=profile}"><i id="redirect-profile-btn" class="fa-solid fa-arrow-left fa-3x" style="color:white;text-decoration:none"></i></a>
+        </div>
+    </div>
     <div class="centerpanel" aria-orientation="horizontal">
-        <form class="row" action="/upload" method="post" enctype="multipart/form-data">
-            <input class="col-8" id="profilePicUpload" type="file" accept="image/*">
-            <button class="col" id="profilePicFileBtn" type="button" style="overflow: hidden" onclick="fetchProfilePicFile()" >파일 보내기</button>
-        </form>
+        <div class="row">
+            <img class="mx-auto my-4" th:src="${picurl}" style="border-radius: 70%;width: fit-content" alt="...">
+        </div>
+        <div class="row">
+            <div class="input-group mx-auto custom-file-input" style="width: 60%">
+                <input type="file"  class="form-control" id="profilePicUpload" aria-describedby="profilePicFileBtn" aria-label="Upload" accept="image/*">
+                <button class="btn btn-outline-secondary" type="button" onclick="fetchProfilePicFile()" id="profilePicFileBtn">파일 보내기</button>
+            </div>
+        </div>
+        <div class="row mx-auto" style="width: 60%">
+            <label for="IdInput">Id</label>
+            <input id="IdInput" class="custom-input me-auto" disabled style="width: 80%;height: 50px" type="text" th:value="${user.getUserName()}">
+            <label for="emailInput">Email</label>
+            <input id="emailInput" class="custom-input me-auto" disabled style="width: 80%;height: 50px" type="text" th:value="${user.getEmail()}">
+            <form id="editForm" class="row me-auto" style="width: 100%" th:action="@{/profile/edit}" th:method="post" th:object="${userEditDto}" onsubmit="return validateForm(event);">
+                <label for="fullNameInput">FullName</label>
+                <input th:field="*{fullName}" id="fullNameInput" class="custom-input me-auto" style="width: 80%;height: 50px" type="text">
+                <label for="passwordInput">Password</label>
+                <input th:field="*{password}" id="passwordInput" class="custom-input me-auto" style="width: 80%;height: 50px" type="password">
+                <label for="bioInput">Bio</label>
+                <textarea th:field="*{bio}" id="bioInput" class="form-control custom-input mx-auto" style="width: 100%;resize: none;text-overflow: ellipsis" rows="3"></textarea>
+                <button id="submitData" type="submit" class="btn btn-outline-secondary mx-auto" style="width: 30%;color: white;height: 50px;border-radius: 10px;overflow: hidden;white-space: normal">수정하기</button>
+            </form>
+        </div>
     </div>
     <div class="sidepanel"></div>
 </section>
 <!-- html data-->
 <th:block th:replace="~{home::footer}"></th:block>
 <script th:inline="javascript">
-    const max_size = 10 * 1024 * 1024;
-
+    const max_size = 5 * 1024 * 1024;
     $("#profilePicUpload").on("change", function () {
         let filesize = this.files[0].size;
         if (filesize > max_size) {
-            alert("파일 용량은 10MB로 제한됩니다.");
+            alert("파일 용량은 5MB로 제한됩니다.");
             $(this).val(''); //업로드한 파일 제거
         }
     });
+
+    function validateForm(event) {
+        const fullName = document.getElementById('fullNameInput').value;
+        const bio = document.getElementById('bioInput').value;
+
+        // if (fullName === "") {
+        //     alert(/*[[#{NotBlank.user.FullName}]]*/);
+        //     event.preventDefault();
+        //     return false;
+        // }
+
+        if (fullName.length > 20) {
+            alert("이름은 20자 이하로 설정해주세요.");
+            event.preventDefault();
+            return false;
+        }
+
+        if (bio.length > 255){
+            alert("자기 소개는 255 자를 넘지 않도록 해주세요");
+            event.preventDefault();
+            return false;
+        }
+
+        return true;
+    }
 
     function fetchProfilePicFile() {
         let formData = new FormData();
@@ -63,11 +136,12 @@
             .then(data => {
                 console.log(data); // 서버에서 반환한 데이터 출력
                 alert("데이터가 성공적으로 전달되었습니다.");
-                let currentUrl = window.location.href;
-                let parts = currentUrl.split('/');
-                parts.pop(); // Remove the last part (current page)
-                parts.pop();
-                location.href = parts.join('/')+"?tab=profile"; // Redirect to the parent URL
+                // let currentUrl = window.location.href;
+                // let parts = currentUrl.split('/');
+                // parts.pop(); // Remove the last part (current page)
+                // parts.pop();
+                // location.href = parts.join('/')+"?tab=profile"; // Redirect to the parent URL
+                location.reload();
             })
             .catch(error => {
                 console.error('Error:', error);

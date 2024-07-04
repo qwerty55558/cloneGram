@@ -1,24 +1,18 @@
 package com.jsy.clonegram.config.security;
 
-import com.jsy.clonegram.config.security.handler.AccessRejectedHandler;
 import com.jsy.clonegram.config.security.handler.MyLogoutSuccessHandler;
 import com.jsy.clonegram.dao.Grade;
 import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
-import static org.springframework.security.config.Customizer.withDefaults;
 
 /**
  * SpringSecurity의 Config
@@ -43,7 +37,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(request -> request
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                        .requestMatchers("/status", "/images/**", "sign/**", "/sendEmail", "/checkCode", "/validation/**").permitAll()
+                        .requestMatchers("/status", "/images/**", "sign/**", "/sendEmail", "/checkCode", "/validation/**", "/find/password").permitAll()
                         .requestMatchers("/dashboard/**").hasRole(Grade.Admin.getCode()) // dashboard가 포함된 URI에서는 role 요건이 충족되어야 접속 가능
                         .anyRequest().authenticated()    // 어떠한 요청이라도 인증필요
                 )

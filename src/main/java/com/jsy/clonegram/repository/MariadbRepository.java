@@ -1,14 +1,14 @@
 package com.jsy.clonegram.repository;
 
 import com.jsy.clonegram.dao.Follow;
-import com.jsy.clonegram.dao.Grade;
 import com.jsy.clonegram.dao.User;
 import com.jsy.clonegram.dto.UserCreateDto;
 import com.jsy.clonegram.dto.UserUpdateDto;
 import com.jsy.clonegram.mybatis.mapper.UserMapper;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,16 +19,19 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+@EnableTransactionManagement
+@Transactional(readOnly = true)
 public class MariadbRepository implements UserRepository {
 
     private final UserMapper userMapper;
 
+    @Transactional
     @Override
     public void unfollowUser(Follow follow) {
         userMapper.unfollowUser(follow);
     }
 
+    @Transactional
     @Override
     public void save(UserCreateDto user) {
         userMapper.save(user);
@@ -39,11 +42,13 @@ public class MariadbRepository implements UserRepository {
         return userMapper.findById(id);
     }
 
+    @Transactional
     @Override
     public void update(UserUpdateDto updateDto) {
         userMapper.updateUser(updateDto);
     }
 
+    @Transactional
     @Override
     public Integer delete(Long userId) {
         return userMapper.delete(userId);
@@ -55,10 +60,17 @@ public class MariadbRepository implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByEmail(String email) {
+        return userMapper.findByEmail(email);
+    }
+
+    @Override
     public List<User> findAll() {
         return userMapper.findAll();
     }
 
+
+    @Transactional
     @Override
     public void followUser(Follow follow) {
         userMapper.followUser(follow);
