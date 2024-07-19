@@ -5,6 +5,7 @@ import com.jsy.clonegram.repository.JpaVideoPostsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourceRegion;
@@ -18,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -31,14 +33,15 @@ public class VideoService {
 
     private final JpaVideoPostsRepository jpaVideoPostsRepository;
     private final UserService userService;
+    private final MessageSource messageSource;
 
-    public Page<VideoPost> getVideoPosts(int pageNum, int pageSize) {
+    public Page<VideoPost> getVideoPosts(int pageNum, int pageSize, Locale locale) {
         try {
             List<VideoPost> videoPostList = jpaVideoPostsRepository.findAll(Sort.by(Sort.Order.desc("id")));
             if (videoPostList.isEmpty()) {
                 VideoPost videoPost = new VideoPost();
                 videoPost.setVideoPath("empty/empty");
-                videoPost.setCaption("릴스가 존재하지 않습니다.");
+                videoPost.setCaption(messageSource.getMessage("home.reels.empty",null,null,locale));
                 videoPostList.add(videoPost);
                 return new PageImpl<>(videoPostList, PageRequest.of(0, 1), 1);
             }

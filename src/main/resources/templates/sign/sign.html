@@ -73,9 +73,9 @@
                                         <button id="authButton" type="button" class="btn btn-outline-light btn-lg col-4 mx-2" onclick="emailAuthMethod()" th:text="#{sign.button.verify}"></button>
                                     </div>
                                     <p class="field-error-text pt-1" th:errors="*{Email}">이메일 오류</p>
-                                    <p id="emailCheckError" class="field-error-text pt-1" style="display: none" >이메일 형식에 맞게 작성해주세요</p>
-                                    <p id="emailCheckOk" class="field-ok-text pt-1" style="display: none">사용가능한 이메일입니다.</p>
-                                    <p id="emailCheckDup" class="field-error-text pt-1" style="display: none">중복된 이메일입니다.</p>
+                                    <p id="emailCheckError" class="field-error-text pt-1" style="display: none" th:text="#{Check.Email}">이메일 형식에 맞게 작성해주세요</p>
+                                    <p id="emailCheckOk" class="field-ok-text pt-1" style="display: none" th:text="#{DuplicationCheck.user.email.ok}">사용가능한 이메일입니다.</p>
+                                    <p id="emailCheckDup" class="field-error-text pt-1" style="display: none" th:text="#{DuplicationCheck.user.email.error}">중복된 이메일입니다.</p>
 
                                 </div>
 
@@ -140,7 +140,7 @@
                         authButton.textContent = /*[[ #{sign.button.verify.check} ]]*/ '';
                         authButton.setAttribute("onClick", "emailAuthCheck()");
                     }else{
-                        alert("이미 존재하는 이메일입니다.");
+                        alert(/*[[#{DuplicationCheck.user.email.error}]]*/);
                     }
                 })
                 .catch(error => {

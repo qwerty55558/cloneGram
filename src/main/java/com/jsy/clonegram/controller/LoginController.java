@@ -6,9 +6,13 @@ import com.jsy.clonegram.service.EmailService;
 import com.jsy.clonegram.service.LoginService;
 import com.jsy.clonegram.service.UserService;
 import com.jsy.clonegram.service.ValidationService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -34,6 +39,7 @@ public class LoginController {
     private final UserService userService;
     private final ValidationService validationService;
     private final EmailService emailService;
+    private final MessageSource messageSource;
 
     @GetMapping("login")
     public String loginPage(Model model) {
@@ -48,18 +54,18 @@ public class LoginController {
     }
 
     @PostMapping("sign")
-    public String createUser(@Valid @ModelAttribute(value = "user") UserCreateDto user, BindingResult br, Model model) {
+    public String createUser(@Valid @ModelAttribute(value = "user") UserCreateDto user, BindingResult br, Model model, HttpServletRequest request) {
 
         Map<String, String> errors = new HashMap<>();
 
         log.info("user = {}", user);
 
         if (!loginService.getEmailAuthStatus(user.getEmail())) {
-            errors.put("EmailAuthError", "이메일 인증 오류입니다.");
+            errors.put("EmailAuthError", messageSource.getMessage("NotAuth.user.Email",null,null, request.getLocale()));
         }
 
         if (!loginService.getDuplicationCheckId(user.getUserName())) {
-            errors.put("IdAuthError", "Id 중복 에러입니다.");
+            errors.put("IdAuthError", messageSource.getMessage("NotAuth.user.userName",null,null, request.getLocale()));
         }
 
         if (br.hasErrors()) {
@@ -77,7 +83,7 @@ public class LoginController {
             loginService.deleteAuthEmail(user.getEmail());
             return "redirect:/login";
         } else {
-            errors.put("IdAuthError", "Id 중복 에러입니다.");
+            errors.put("IdAuthError", messageSource.getMessage("NotAuth.user.userName",null,null, request.getLocale()));
             model.addAttribute("error", errors);
             return "sign/sign";
         }
@@ -96,11 +102,11 @@ public class LoginController {
     }
 
     @PostMapping("find/password")
-    public String findPasswordRequest(@RequestParam("email") String email, Model model) {
+    public String findPasswordRequest(@RequestParam("email") String email, Model model, HttpServletRequest request) {
         Map<String, String> errors = new HashMap<>();
 
         if (validationService.getValidateEmail(email)) {
-            errors.put("EmailAuthError", "이메일이 존재하지 않습니다.");
+            errors.put("EmailAuthError", messageSource.getMessage("Check.Email", null, null, request.getLocale()));
         }
         if (!errors.isEmpty()) {
             model.addAttribute("error", errors);
@@ -109,9 +115,9 @@ public class LoginController {
         
         // 임시 비밀번호 설정과 이메일 발송
 
-        emailService.sendResetPasswordEmail(email);
+        emailService.sendResetPasswordEmail(email, request.getLocale());
 
-        model.addAttribute("pwmsg", "비밀번호가 변경되었습니다. 이메일을 확인해주세요.");
+        model.addAttribute("pwmsg", messageSource.getMessage("user.pw.changed", null, null, request.getLocale()));
         
         return "login/login";
     }

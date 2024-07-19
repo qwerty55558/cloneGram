@@ -82,11 +82,11 @@
                     <div class="row">
                         <div class="col-3 profileitem" style="font-weight: bold;font-size: larger" th:text="${user.getUserName()}"></div>
                         <div class="col-4 profileitem">
-                            <button class="btn btn-outline-dark profilebtn text-white" id="unfollowuser" th:if="${follow.getFollowCheck()}">언팔로우하기</button>
-                            <button class="btn btn-outline-dark profilebtn text-white" id="followuser" th:unless="${follow.getFollowCheck()}">팔로우하기</button>
+                            <button class="btn btn-outline-dark profilebtn text-white" id="unfollowuser" th:if="${follow.getFollowCheck()}" th:text="#{user.follow.unfollow}">언팔로우하기</button>
+                            <button class="btn btn-outline-dark profilebtn text-white" id="followuser" th:unless="${follow.getFollowCheck()}" th:text="#{user.follow.follow}">팔로우하기</button>
                         </div>
                         <div class="col-4 profileitem">
-                            <button class="btn btn-outline-dark profilebtn text-white" id="videoList" onclick="reelsPage()">업로드한 릴스</button>
+                            <button class="btn btn-outline-dark profilebtn text-white" id="videoList" onclick="reelsPage()" th:text="#{user.uploadedReels}">업로드한 릴스</button>
                         </div>
                         <div class="col-1 profileitem"></div>
                     </div>
@@ -94,9 +94,9 @@
                 <div class="col-4" style="width: 100%">
                     <div class="row">
                         <div class="col-1"></div>
-                        <div class="col-3 profileitem" th:text="'게시물 '+${posts.size()}">게시물</div>
-                        <div class="col-4 profileitem" th:text="'팔로워 '+${follow.getFollower()}">팔로워</div>
-                        <div class="col-3 profileitem" th:text="'팔로잉 '+${follow.getFollowing()}">팔로잉</div>
+                        <div class="col-3 profileitem" th:text="#{user.post(${posts.size()})}">게시물</div>
+                        <div class="col-4 profileitem" th:text="#{user.follower(${follow.getFollower()})}">팔로워</div>
+                        <div class="col-3 profileitem" th:text="#{user.following(${follow.getFollowing()})}">팔로잉</div>
                         <div class="col-1"></div>
                     </div>
                 </div>

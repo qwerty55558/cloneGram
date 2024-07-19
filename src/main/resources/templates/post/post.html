@@ -89,7 +89,7 @@
             <div class="card-body">
                 <img th:src="${post.getImageUrl()}" class="mx-5 my-3 imgpanel">
                 <div class="likePanel my-auto" style="width: 90%;display: flex;justify-content: end;">
-                    <span th:if="${likeyCount!=null}" class="mx-3" style="justify-content: start;" th:text="${'좋아요 '+likeyCount+'개'}"></span>
+                    <span th:if="${likeyCount!=null}" class="mx-3" style="justify-content: start;" th:text="#{likey.likey(${likeyCount})}"></span>
                     <a id="Xheart" href="" style="color: red;text-decoration: none" onclick="likeyReqSend('O')"><i class="fa-regular fa-heart fa-2x"></i></a>
                     <a id="Oheart" href="" style="color: red;text-decoration: none" onclick="likeyReqSend('X')"><i class="fa-solid fa-heart fa-2x"></i></a>
                 </div>
@@ -127,19 +127,19 @@
         <div class="modal-dialog">
             <div class="modal-content" style="background: black;border: 1px white solid;color: white">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="updateModalLabel">수정하기</h1>
+                    <h1 class="modal-title fs-5" id="updateModalLabel" th:text="#{post.update}">수정하기</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <img id="postPicImg" hidden="hidden" style="width: 150px;height: 150px">
                     <input type="file" id="postPicInput" accept="image/*">
                     <p></p>
-                    <button id="postPicDeleteBtn" class="btn btn-dark" hidden="hidden">사진 삭제</button>
+                    <button id="postPicDeleteBtn" class="btn btn-dark" hidden="hidden" th:text="#{post.deletePic}">사진 삭제</button>
                     <div id="updateQuill" style="border: none;height: 100px;"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="sendUpdateReq()">Save changes</button>
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="sendUpdateReq()" th:text="#{post.update.submit}">Save changes</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" th:text="#{close}">Close</button>
                 </div>
             </div>
         </div>
@@ -149,8 +149,11 @@
 <th:block th:replace="~{home::footer}"></th:block>
 <script th:inline="javascript">
     const postId = new URLSearchParams(window.location.search).get("id");
-    const maxSize = /*[[${fileMaxSize}]]*/ '';
+    const maxSize = /*[[${fileMaxSize}]]*/ + 0;
     const captionSize = /*[[${postCaptionSize}]]*/ '';
+
+    const fileSizeComment = /*[[#{post.filesize}]]*/ '';
+    const commentSizeComment = /*[[#{post.commentsize}]]*/ '';
 
     let quill;
     let uQuill;
@@ -172,14 +175,14 @@
         uQuill = new Quill('#updateQuill', option);
 
         document.getElementById('postPicInput').addEventListener('change', function (event) {
-            // fileElement를 가져오는 올바른 방법
+
             let fileElement = this.files[0];
 
             // fileElement가 존재하는지 확인
             if (fileElement) {
                 // 파일 크기 비교
                 if (fileElement.size > maxSize) {
-                    alert("파일 사이즈는 " + (maxSize/1024)/1024 + "(MB) 보다 크면 안 됩니다.");
+                    alert(fileSizeComment.replace('{0}',maxSize/1024/1024));
                     $('#postPicInput').val('');
                     return;
                 } else {
@@ -259,7 +262,7 @@
     function sendCommentFormData(formData) {
         let text = quill.getText();
         if (text.length > captionSize) {
-            alert("글이 "+captionSize+" 자를 넘으면 안 됩니다.");
+            alert(commentSizeComment.replace("{0}",captionSize));
             return;
         }
         formData.append('comment',text);
@@ -271,7 +274,7 @@
         }).then(response => response.text())
             .then(data => {
                 console.log(data);
-                alert("댓글이 등록되었습니다.");
+                alert(/*[[#{post.comment.append}]]*/);
                 window.location.reload();
             })
             .catch(error =>{
@@ -289,7 +292,7 @@
     }
 
     function deletePost(){
-        if (confirm("정말 포스트를 삭제하시겠습니까?")){
+        if (confirm(/*[[#{post.delete}]]*/)){
             $.ajax({
                 url: "delete/post",
                 method: "POST",
@@ -298,14 +301,14 @@
                 },
                 success: function (response){
                     if (!response || !response.content || response.content.length === 0 ){
-                        alert("성공적으로 포스트를 삭제하였습니다.");
+                        alert(/*[[#{post.delete.success}]]*/);
                         window.location.href = /*[[@{/home(tab=profile)}]]*/ '';
                     }else{
-                        alert("삭제 중 에러가 발생했습니다.");
+                        alert(/*[[#{post.delete.error}]]*/);
                     }
                 },
                 error: function (){
-                    alert("삭제 중 에러가 발생했습니다.");
+                    alert(/*[[#{post.delete.error}]]*/);
                 }
             })
         }else {
@@ -325,14 +328,14 @@
             contentType: false, // ContentType을 자동으로 설정하지 않도록 설정
             success: function (response) {
                 if (!response || !response.content || response.content.length === 0) {
-                    alert("성공적으로 포스트를 업데이트 하였습니다.");
+                    alert(/*[[#{post.update.success}]]*/);
                     window.location.reload();
                 } else {
-                    alert("업로드 중 에러가 발생했습니다.");
+                    alert(/*[[#{post.update.error}]]*/);
                 }
             },
             error: function () {
-                alert("업로드 중 에러가 발생했습니다.");
+                alert(/*[[#{post.update.error}]]*/);
             },
             complete: function () {
                 imageData = new FormData(); // imageData 초기화
@@ -340,15 +343,15 @@
         });
     }
 
-    function checkFileSize(file){
-        if (file.size > maxSize) {
-            alert("이미지의 크기가 너무 큽니다.");
-            $("#postPicInput").val('');
-        }else{
-            blob = file;
-            return file;
-        }
-    }
+    // function checkFileSize(file){
+    //     if (file.size > maxSize) {
+    //         alert(/*[[#{post.pic.maxsize}]]*/);
+    //         $("#postPicInput").val('');
+    //     }else{
+    //         blob = file;
+    //         return file;
+    //     }
+    // }
 
     function getPlainTextFromQuill(quill) {
         // Quill 에디터에서 Delta 형식의 객체를 가져옵니다.

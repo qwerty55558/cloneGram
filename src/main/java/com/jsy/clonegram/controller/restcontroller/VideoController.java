@@ -4,6 +4,7 @@ import com.jsy.clonegram.dao.VideoPost;
 import com.jsy.clonegram.service.UploadService;
 import com.jsy.clonegram.service.UserService;
 import com.jsy.clonegram.service.VideoService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,8 +35,8 @@ public class VideoController {
     }
 
     @PostMapping("/video/list")
-    public Page<VideoPost> findVideos(@RequestParam("pageNum") Integer pageNum) {
-        return videoService.getVideoPosts(pageNum, 1);
+    public Page<VideoPost> findVideos(@RequestParam("pageNum") Integer pageNum, HttpServletRequest request) {
+        return videoService.getVideoPosts(pageNum, 1, request.getLocale());
     }
 
     @GetMapping("/video/{videoId}")

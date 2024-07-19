@@ -65,14 +65,14 @@
         <div class="modal-dialog">
             <div class="modal-content" style="background: black;border: 1px white solid;color: white">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="updateModalLabel">수정하기</h1>
+                    <h1 class="modal-title fs-5" id="updateModalLabel" th:text="#{post.update}">수정하기</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div id="updateQuill" style="border: none;height: 100px;"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="captionUpdate()">Save changes</button>
+                    <button type="button" class="btn btn-primary" onclick="captionUpdate()" th:text="#{post.update.submit}">Save changes</button>
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -81,7 +81,7 @@
 </section>
 <!-- html data-->
 <th:block th:replace="~{home::footer}"></th:block>
-<script>
+<script th:inline="javascript">
     let pageNum = 0;
     let loadSign = true;
 
@@ -152,7 +152,7 @@
     }
 
     function videoUpdate(id) {
-        if (confirm("캡션을 업데이트 하시겠습니까?")) {
+        if (confirm(/*[[#{reels.update.caption}]]*/)) {
             let modal = new bootstrap.Modal(document.getElementById('updateModal'));
             let caption = document.getElementById(id + "_caption").textContent;
             uQuill.setText(caption);
@@ -164,7 +164,7 @@
     }
 
     function videoDelete(id){
-        if (confirm("비디오를 삭제 하시겠습니까?")) {
+        if (confirm(/*[[#{reels.delete}]]*/)) {
             reelsDelete(id);
         }else{
 
@@ -183,13 +183,13 @@
             },
             success: function (response){
                 if(response){
-                    alert("성공적으로 캡션을 수정하였습니다.");
+                    alert(/*[[#{reels.update.caption.success}]]*/);
                 }else{
-                    alert("캡션 수정 중 오류가 발생했습니다.");
+                    alert(/*[[#{reels.update.caption.error}]]*/);
                 }
             },
             error: function (){
-                alert("캡션 수정 중 오류가 발생했습니다.");
+                alert(/*[[#{reels.update.caption.error}]]*/);
             },
             complete: function (){
                 window.location.reload();
@@ -206,13 +206,13 @@
             },
             success: function (response) {
                 if(response){
-                    alert("성공적으로 삭제하였습니다.");
+                    alert(/*[[#{reels.delete.success}]]*/);
                 }else{
-                    alert("삭제 과정 중 오류가 발생했습니다.");
+                    alert(/*[[#{reels.delete.error}]]*/);
                 }
             },
             error: function (){
-                alert("삭제 과정 중 오류가 발생했습니다.");
+                alert(/*[[#{reels.delete.error}]]*/);
             },
             complete: function (){
                 window.location.reload();

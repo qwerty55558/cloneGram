@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 
+import java.util.Locale;
+
 
 @Slf4j
 @SpringBootTest
@@ -17,7 +19,7 @@ class VideoServiceTest {
 
     @Test
     void getVideoPosts() {
-        Page<VideoPost> videoPosts = videoService.getVideoPosts(0, 3);
+        Page<VideoPost> videoPosts = videoService.getVideoPosts(0, 3, Locale.KOREA);
         videoPosts.stream().forEach(videoPost -> {
             log.info(videoPost.toString());
         });

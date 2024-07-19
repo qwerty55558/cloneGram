@@ -5,6 +5,7 @@ import com.jsy.clonegram.dto.EmailRequestDto;
 import com.jsy.clonegram.dto.DefaultMessageDto;
 import com.jsy.clonegram.service.EmailService;
 import com.jsy.clonegram.service.ValidationService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,10 +21,10 @@ public class EmailController {
     private final ValidationService validationService;
 
     @PostMapping("/sendEmail")
-    public DefaultMessageDto sendEmail(@RequestBody EmailRequestDto req) {
+    public DefaultMessageDto sendEmail(@RequestBody EmailRequestDto req, HttpServletRequest request) {
         try {
             if (validationService.getValidateEmail(req.getEmail())) {
-                emailService.sendAuthEmail(req.getEmail());
+                emailService.sendAuthEmail(req.getEmail(),request.getLocale());
                 return new DefaultMessageDto("success");
             }else {
                 return new DefaultMessageDto("duplicate");

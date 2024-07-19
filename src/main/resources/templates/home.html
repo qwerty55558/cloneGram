@@ -185,19 +185,19 @@
             <a class="nav-item" th:href="@{/home}"><img src="/images/logo.webp" style="max-width: 100%" alt=""></a>
             <a class="nav-item-text" th:href="@{/home}"><i class="fa-brands fa-instagram fa-3x me-3"></i></a>
             <button class="btn btn-outline-dark navbtn text-white active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true"><i class="fa-solid fa-house me-3"></i><span class="btnText" th:text="#{home.home}"></span></button>
-            <button class="btn btn-outline-dark navbtn text-white" id="v-pills-who-tab" data-bs-toggle="pill" data-bs-target="#v-pills-who" type="button" role="tab" aria-controls="v-pills-who" aria-selected="false"><i class="fa-solid fa-magnifying-glass me-3"></i><span class="btnText">검색</span></button>
-            <button class="btn btn-outline-dark navbtn text-white" id="v-pills-search-tab" data-bs-toggle="pill" data-bs-target="#v-pills-search" type="button" role="tab" aria-controls="v-pills-search" aria-selected="false"><i class="fa-solid fa-compass me-3"></i><span class="btnText">탐색 탭</span></button>
-            <button class="btn btn-outline-dark navbtn text-white" id="v-pills-video-tab" data-bs-toggle="pill" data-bs-target="#v-pills-video" type="button" role="tab" aria-controls="v-pills-video" aria-selected="false"><i class="fa-solid fa-camera-retro me-3"></i><span class="btnText">릴스</span></button>
-            <button class="btn btn-outline-dark navbtn text-white" id="v-pills-message-tab" data-bs-toggle="pill" data-bs-target="#v-pills-message" type="button" role="tab" aria-controls="v-pills-message" aria-selected="false"><i class="fa-solid fa-location-arrow me-3"></i><span class="btnText">메시지</span></button>
-            <button class="btn btn-outline-dark navbtn text-white" id="v-pills-likey-tab" data-bs-toggle="pill" data-bs-target="#v-pills-likey" type="button" role="tab" aria-controls="v-pills-likey" aria-selected="false"><i class="fa-regular fa-heart me-3"></i><span class="btnText">알림</span><span id="notificationCount" class="notification-count mx-1"></span></button>
-            <button class="btn btn-outline-dark navbtn text-white" id="v-pills-create-tab" data-bs-toggle="pill" data-bs-target="#v-pills-create" type="button" role="tab" aria-controls="v-pills-create" aria-selected="false"><i class="fa-regular fa-square-plus me-3"></i><span class="btnText">만들기</span></button>
-            <button th:if="${#strings.equals(user.grade,'Admin')}" class="btn btn-outline-dark navbtn text-white" onclick="goToDashboard()" type="button"><i class="fa-solid fa-chart-line me-3"></i><span class="btnText">대시보드</span></button>
-            <button class="btn btn-outline-dark navbtn text-white" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false"><img class="me-3" th:src="${picurl.miniPic}" style="width: 35px; height: 35px; object-fit: cover;border-radius: 70%;"><span class="btnText">프로필</span></button>
+            <button class="btn btn-outline-dark navbtn text-white" id="v-pills-who-tab" data-bs-toggle="pill" data-bs-target="#v-pills-who" type="button" role="tab" aria-controls="v-pills-who" aria-selected="false"><i class="fa-solid fa-magnifying-glass me-3"></i><span class="btnText" th:text="#{home.search}">검색</span></button>
+            <button class="btn btn-outline-dark navbtn text-white" id="v-pills-search-tab" data-bs-toggle="pill" data-bs-target="#v-pills-search" type="button" role="tab" aria-controls="v-pills-search" aria-selected="false"><i class="fa-solid fa-compass me-3"></i><span class="btnText" th:text="#{home.discover}">탐색</span></button>
+            <button class="btn btn-outline-dark navbtn text-white" id="v-pills-video-tab" data-bs-toggle="pill" data-bs-target="#v-pills-video" type="button" role="tab" aria-controls="v-pills-video" aria-selected="false"><i class="fa-solid fa-camera-retro me-3"></i><span class="btnText" th:text="#{home.reels}">릴스</span></button>
+            <button class="btn btn-outline-dark navbtn text-white" id="v-pills-message-tab" data-bs-toggle="pill" data-bs-target="#v-pills-message" type="button" role="tab" aria-controls="v-pills-message" aria-selected="false"><i class="fa-solid fa-location-arrow me-3"></i><span class="btnText" th:text="#{home.message}">메시지</span></button>
+            <button class="btn btn-outline-dark navbtn text-white" id="v-pills-likey-tab" data-bs-toggle="pill" data-bs-target="#v-pills-likey" type="button" role="tab" aria-controls="v-pills-likey" aria-selected="false"><i class="fa-regular fa-heart me-3"></i><span class="btnText" th:text="#{home.notification}">알림</span><span id="notificationCount" class="notification-count mx-1"></span></button>
+            <button class="btn btn-outline-dark navbtn text-white" id="v-pills-create-tab" data-bs-toggle="pill" data-bs-target="#v-pills-create" type="button" role="tab" aria-controls="v-pills-create" aria-selected="false"><i class="fa-regular fa-square-plus me-3"></i><span class="btnText" th:text="#{home.create}">만들기</span></button>
+            <button th:if="${#strings.equals(user.grade,'Admin')}" class="btn btn-outline-dark navbtn text-white" onclick="goToDashboard()" type="button"><i class="fa-solid fa-chart-line me-3"></i><span class="btnText" th:text="#{home.dashboard}">대시보드</span></button>
+            <button class="btn btn-outline-dark navbtn text-white" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false"><img class="me-3" th:src="${picurl.miniPic}" style="width: 35px; height: 35px; object-fit: cover;border-radius: 70%;"><span class="btnText" th:text="#{home.profile}">프로필</span></button>
 
             <div class="btn-group dropup mt-auto mb-3">
-                <button class="btn btn-outline-dark navbtn text-white dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" type="button"><i class="fa-solid fa-bars me-3" ></i><span class="btnText">더 보기</span></button>
+                <button class="btn btn-outline-dark navbtn text-white dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" type="button"><i class="fa-solid fa-bars me-3" ></i><span class="btnText" th:text="#{home.more}">더 보기</span></button>
                 <ul class="dropdown-menu" style="background: black;border: 1px darkslategray solid">
-                    <li><a class="dropdown-item" href="/logout" style="text-decoration: none;color: white">로그아웃</a></li>
+                    <li><a class="dropdown-item" href="/logout" style="text-decoration: none;color: white" th:text="#{home.logout}">로그아웃</a></li>
                 </ul>
             </div>
         </div>
@@ -221,22 +221,22 @@
                     <div class="col-4 pt-4" style="width: 100%">
                         <div class="row">
                             <div class="col-3 profileitem" style="font-weight: bold;font-size: larger" th:text="${user.getUserName()}"></div>
-                            <div class="col-4 profileitem"><button class="btn btn-outline-dark profilebtn text-white" onclick="goToProfileEditPage()">프로필 편집</button></div>
-                            <div class="col-4 profileitem"><button class="btn btn-outline-dark profilebtn text-white" onclick="goTomyReels()">보관된 릴스 보기</button> </div>
+                            <div class="col-4 profileitem"><button class="btn btn-outline-dark profilebtn text-white" onclick="goToProfileEditPage()" th:text="#{home.profile.edit}">프로필 편집</button></div>
+                            <div class="col-4 profileitem"><button class="btn btn-outline-dark profilebtn text-white" onclick="goTomyReels()" th:text="#{user.uploadedReels}">보관된 릴스 보기</button> </div>
                             <div class="col-1 profileitem"><i class="fa-solid fa-gear fa-lg"></i></div>
                         </div>
                     </div>
                     <div class="col-4" style="width: 100%">
                         <div class="row">
                             <div class="col-1"></div>
-                            <div class="col-3 profileitem" th:text="'게시물 '+${posts.size()}">게시물</div>
-                            <div class="col-4 profileitem"><a id="followercount" href="#" data-bs-toggle="modal" data-bs-target="#followermodal" style="color: white;text-decoration: none" th:text="'팔로워 '+${follow.getFollower()}"></a>
+                            <div class="col-3 profileitem" th:text="#{user.post(${posts.size()})}">게시물</div>
+                            <div class="col-4 profileitem"><a id="followercount" href="#" data-bs-toggle="modal" data-bs-target="#followermodal" style="color: white;text-decoration: none" th:text="#{user.follower(${follow.getFollower()})}"></a>
                                 <!-- Modal -->
                                 <div class="modal fade" id="followermodal" tabindex="-1" aria-labelledby="followermodalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content" style="background: black">
                                             <div class="modal-header justify-content-between">
-                                                <h1 class="modal-title fs-5" id="followermodalLabel">팔로워 목록</h1>
+                                                <h1 class="modal-title fs-5" id="followermodalLabel" th:text="#{home.profile.follower}">팔로워 목록</h1>
                                                 <a href="#" style="color: white;text-decoration: none" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-window-close fa-xl"></i></a>
                                             </div>
                                             <div id="followerList" class="modal-body">
@@ -247,13 +247,13 @@
                                 </div>
                                 <!-- Modal -->
                             </div>
-                            <div class="col-4 profileitem"><a id="followingcount" href="#" data-bs-toggle="modal" data-bs-target="#followingmodal" style="color: white;text-decoration: none" th:text="'팔로잉 '+${follow.getFollowing()}" ></a>
+                            <div class="col-4 profileitem"><a id="followingcount" href="#" data-bs-toggle="modal" data-bs-target="#followingmodal" style="color: white;text-decoration: none" th:text="#{user.following(${follow.getFollowing()})}" ></a>
                                 <!-- Modal -->
                                 <div class="modal fade" id="followingmodal" tabindex="-1" aria-labelledby="followingmodalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content" style="background: black">
                                             <div class="modal-header justify-content-between">
-                                                <h1 class="modal-title fs-5" id="followingmodalLabel">팔로잉 목록</h1>
+                                                <h1 class="modal-title fs-5" id="followingmodalLabel" th:text="#{home.profile.following}">팔로잉 목록</h1>
                                                 <a href="#" style="color: white;text-decoration: none" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-window-close fa-xl"></i></a>
                                             </div>
                                             <div id="followingList" class="modal-body">
@@ -286,15 +286,15 @@
         <div class="tab tab-pane fade panels" id="v-pills-create" role="tabpanel" aria-labelledby="v-pills-create-tab" tabindex="2" aria-orientation="horizontal">
             <div class="pan" style="width: 100%;display: flex;justify-content: center;align-content: start">
                 <div class="card text-center mt-5" style="width: 60%;min-width: 250px">
-                    <div class="card-header text-white" style="background: darkslategray;">
+                    <div class="card-header text-white" style="background: darkslategray;" th:text="#{home.create}">
                         만들기
                     </div>
                     <div class="card-body text-white" style="background: black">
-                        <h5 id="hiddenTitle" class="card-title">피드 작성을 위한 사진을 등록해주세요.</h5>
+                        <h5 id="hiddenTitle" class="card-title" th:text="#{home.create.feedpic}">피드 작성을 위한 사진을 등록해주세요.</h5>
                         <input type="file" id="postPicInput" accept="image/*">
                         <img id="postPicImg" hidden="hidden" style="width: 200px;height: 200px">
                         <p></p>
-                        <button type="button" id="postPicDeleteBtn" class="btn btn-outline-dark profilebtn text-white" hidden="hidden" style="justify-content: end">사진 삭제</button>
+                        <button type="button" id="postPicDeleteBtn" class="btn btn-outline-dark profilebtn text-white" hidden="hidden" style="justify-content: end" th:text="#{home.create.feedpic.delete}">사진 삭제</button>
                     </div>
                     <div class="card-footer text-center text-white" style="background: black;border-top: darkslategray;border-style: solid;height: fit-content;border-width: 1px">
                         <div id="editor"></div>
@@ -309,7 +309,7 @@
         <div class="tab tab-pane fade panels" id="v-pills-who" role="tabpanel" aria-labelledby="v-pills-who-tab" tabindex="3" aria-orientation="horizontal">
             <div class="pan" style="width: 100%; display: flex; justify-content: center; align-items: start; flex-direction: column;">
                 <div class="content my-4 mx-auto" style="width: 80%; display: flex;">
-                    <div class="me-3" style="width: 20%; display: flex; justify-content: end; align-items: center;"><i class="fa-solid fa-magnifying-glass fa-xl align-content-center mx-2"></i> 검색하기</div>
+                    <div class="me-3" style="width: 20%; display: flex; justify-content: end; align-items: center;" th:text="#{home.search.search}"><i class="fa-solid fa-magnifying-glass fa-xl align-content-center mx-2"></i> 검색하기</div>
                     <div id="searchbar" style="width: 80%; border-radius: 10px;"></div>
                 </div>
                 <div id="postscontent" class="content mx-auto row" style="width: 80%;">
@@ -321,7 +321,7 @@
         </div>
         <div class="tab tab-pane fade panels" id="v-pills-message" role="tabpanel" aria-labelledby="v-pills-message-tab" tabindex="4" aria-orientation="horizontal">
             <div class="pan" style="width: 80%; display: flex; justify-content: center; align-items: start; flex-direction: column;">
-                <div class="h1 my-4">
+                <div class="h1 my-4" th:text="#{home.message}">
                     메시지
                 </div>
                 <div id="messageList" style="width: 100%;display: flex;justify-content: center;align-content: start;flex-direction: column">
@@ -330,7 +330,7 @@
             </div>
             <div class="offcanvas offcanvas-end" id="v-offcanvas-message" aria-labelledby="v-offcanvas-message-label" tabindex="5" style="width: 80%;background: black;color: white">
                 <div class="offcanvas-header justify-content-between">
-                    <h5 class="offcanvas-title" id="offcanvasRightLabel">메세지</h5>
+                    <h5 class="offcanvas-title" id="offcanvasRightLabel" th:text="#{home.message}">메세지</h5>
                     <a href="#" style="color: white;text-decoration: none" data-bs-dismiss="offcanvas" aria-label="Close"><i class="fa-solid fa-window-close fa-xl"></i></a>
                 </div>
                 <div id="msguserpic"></div>
@@ -350,8 +350,8 @@
         <div class="tab tab-pane fade panels" id="v-pills-likey" role="tabpanel" aria-labelledby="v-pills-likey-tab" tabindex="5" aria-orientation="horizontal">
             <div class="pan" style="width: 80%; display: flex; justify-content: center; align-items: start; flex-direction: column;">
                 <div class="my-4 justify-content-between" style="width: 100%;display: flex;flex-direction: row">
-                    <div class="h1">알림</div>
-                    <div class="text-body-secondary text-decoration-underline"><a id="notificationsDelete" href="#" style="color: white">모두 삭제</a></div>
+                    <div class="h1" th:text="#{home.notification}">알림</div>
+                    <div class="text-body-secondary text-decoration-underline"><a id="notificationsDelete" href="#" style="color: white" th:text="#{home.notification.delete}">모두 삭제</a></div>
                 </div>
                 <div id="notificationsList" style="width: 100%;display: flex;justify-content: center;align-content: start;flex-direction: column;overflow-y: auto">
 
@@ -363,7 +363,7 @@
                 <div id="videoPanel" style="width: 80%;justify-content: center">
                     <video controls autoplay loop class="my-3" id="videoPlayer" style="width: 100%;">
                         <source id="videoSource" src="" type="video">
-                        릴스가 존재하지 않습니다.
+                        <span th:text="#{home.reels.empty}"></span>
                     </video>
                     <div id="videoCaption" class="justify-content-center d-flex" style="width: 100%">
                     </div>
@@ -382,18 +382,18 @@
                     <div class="modal-dialog">
                         <div class="modal-content" style="background: black;color: white;border: white 1px solid">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="videoModalLabel">릴스 만들기</h1>
+                                <h1 class="modal-title fs-5" id="videoModalLabel" th:text="#{home.reels.create}">릴스 만들기</h1>
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <p><label for="videoUpload">Upload a video:</label></p>
+                                <p><label for="videoUpload" th:text="#{home.reels.uploadvideo}">Upload a video:</label></p>
                                 <input type="file" id="videoUpload" name="video" accept="video/*">
                             </div>
                             <div id="vquill" style="height: 80px;">
 
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" id="videoUploadBtn">Upload</button>
+                                <button type="button" class="btn btn-primary" id="videoUploadBtn" th:text="#{upload}">Upload</button>
                             </div>
                         </div>
                     </div>
@@ -404,7 +404,6 @@
             <div class="pan justify-content-between" style="display: flex">
                 <div id="ollamaPanel" class="mt-4" style="width: 80%;justify-content: center;align-content: end;height: 90vh">
                     <div id="chatPanel" style="width: 100%">
-                        인공지능을 활용한 통신 추가 예정
                     </div>
                     <div id="oquill" style="width: 100%;height: 50px;border-radius: 10px">
 
@@ -430,8 +429,11 @@
 <script th:inline="javascript">
     const videoUrlPrefix = /*[[${videoPath}]]*/ '';
 
-    const maxSize = /*[[${fileMaxSize}]]*/ '';
+    const maxSize = /*[[${fileMaxSize}]]*/ + 0;
     const captionSize = /*[[${postCaptionSize}]]*/ '';
+    const filemaxsizecomment = /*[[#{post.filesize}]]*/ '';
+    const commentlengthcomment = /*[[#{post.commentsize}]]*/ '';
+
     let quill
     let squill;
     let vquill;
@@ -813,7 +815,7 @@
             },
             success: function (response){
                 if (!response || !response.content || response.content.length === 0) {
-                    alert('더 이상 로드할 릴스가 없습니다.');
+                    alert(/*[[#{home.reels.nomorevideo}]]*/);
                     videoPageNum = 0;
                     videoLoad();
                     return;
@@ -841,12 +843,12 @@
             processData: false,  // Prevent jQuery from automatically transforming the data into a query string
             contentType: false,  // Ensure the request is sent as a multipart/form-data request
             success: function (response){
-                alert("정상적으로 업로드 되었습니다.");
+                alert(/*[[#{home.reels.upload.success}]]*/);
                 window.location.reload();
             },
             error: function (xhr, status, error) {
                 console.error('Upload failed:', status, error);
-                alert("정상적으로 업로드 되지 않았습니다. 파일을 확인해주세요");
+                alert(/*[[#{home.reels.upload.error}]]*/);
             }
         });
     }
@@ -910,7 +912,7 @@
                 recommended.content.forEach((rec, index, array) => {
                     let randCommentContent;
                     if (rec.randComment.content === "" || rec.randComment.content === null) {
-                        randCommentContent = "댓글이 존재하지 않습니다.";
+                        randCommentContent = /*[[#{home.post.comment.empty}]]*/ '';
                     }else{
                         randCommentContent = rec.randComment.content;
                     }
@@ -1175,7 +1177,7 @@
         let fileInput = document.getElementById("postPicInput");
         let file = fileInput.files[0];
         if (file.size > maxSize) {
-            alert("파일 사이즈는 " + (maxSize/1024)/1024 + "(MB) 보다 크면 안 됩니다.");
+            alert(filemaxsizecomment.replace("{0}",maxSize/1024/1024));
         } else {
             if (file.size > (maxSize / 2)) {
                 console.log("다운사이징 진행")
@@ -1196,7 +1198,7 @@
     function sendFormData(formData) {
         let text = quill.getText();
         if (captionSize < text.length){
-            alert("글은 500 자를 넘을 수 없습니다.");
+            alert(commentlengthcomment.replace("{0}",captionSize));
             return;
         }
         formData.append('caption', text);
@@ -1211,7 +1213,7 @@
             .then(response => response.text())
             .then(data => {
                 console.log(data); // 서버에서 반환한 데이터 출력
-                alert("데이터가 성공적으로 전달되었습니다.");
+                alert(/*[[#{File.sendFile.success}]]*/);
                 window.location.href = 'home';
             })
             .catch(error => {
