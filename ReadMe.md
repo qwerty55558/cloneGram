@@ -21,6 +21,9 @@ Spring Boot를 관계형 데이터 베이스와 연동하여 프로젝트를 진
 * **Jquery** - ScriptLibrary
 ### VCS
 * **Git**
+### Server
+* **Ubuntu 22.0.4 (OracleCloudInstance)**
+* **Nginx** - ProxyPass
 
 
 ## 🗒️Record
@@ -34,3 +37,6 @@ Spring Boot를 관계형 데이터 베이스와 연동하여 프로젝트를 진
 8. [CloneGram 토이프로젝트 - 08](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-08)
 9. [CloneGram 토이프로젝트 - 09](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-09)
 10. [CloneGram 토이프로젝트 - 10](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-10)
+11. [CloneGram 토이프로젝트 - 11](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-11)
+12. [CloneGram 토이프로젝트 - 12](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-12)
+13. [CloneGram 토이프로젝트 - 13](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-13)
