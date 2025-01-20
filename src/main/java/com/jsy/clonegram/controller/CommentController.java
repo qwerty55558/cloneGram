@@ -1,4 +1,4 @@
-package com.jsy.clonegram.controller.restcontroller;
+package com.jsy.clonegram.controller;
 
 import com.jsy.clonegram.service.CommentService;
 import lombok.RequiredArgsConstructor;

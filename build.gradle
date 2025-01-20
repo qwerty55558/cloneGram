@@ -37,6 +37,17 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 
+//	// JUnit Jupiter API와 Engine 추가 (명시적으로 선언)
+//	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+//	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+//
+//	// AssertJ 등 추가적인 테스트 라이브러리 (Spring Boot Starter Test에 포함되어 있음)
+//	testImplementation 'org.assertj:assertj-core:3.24.2'
+//
+//	// Mock 테스트 라이브러리 (Spring Boot Starter Test에 포함되어 있음)
+//	testImplementation 'org.mockito:mockito-core:5.5.0'
+//	testImplementation 'org.mockito:mockito-junit-jupiter:5.5.0'
+
 	// lombok TEST
 	testCompileOnly 'org.projectlombok:lombok' // 테스트 의존성 추가
 	testAnnotationProcessor 'org.projectlombok:lombok' // 테스트 의존성 추가

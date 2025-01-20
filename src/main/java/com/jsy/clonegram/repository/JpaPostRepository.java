@@ -114,7 +114,6 @@ public class JpaPostRepository implements PostRepository {
 
         List<Post> resultList = postTypedQuery.getResultList();
 
-        // count 쿼리를 생성합니다. 기존의 CriteriaQuery를 재활용하여 select 절을 수정합니다.
         CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
         Root<Post> countRoot = countQuery.from(Post.class);
         if (cond != null && !cond.isEmpty()) {

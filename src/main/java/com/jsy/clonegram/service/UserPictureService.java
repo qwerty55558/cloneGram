@@ -208,4 +208,17 @@ public class UserPictureService {
         return false;
     }
 
+    public boolean deleteUserPicture(String userName) {
+        try {
+            Iterable<String> strings = List.of(new String[]{"images/" + userName + "/" + userName + "_pic"});
+            cloudinary.api().deleteResources(strings, ObjectUtils.emptyMap());
+            cloudinary.api().deleteFolder("images/" + userName, ObjectUtils.emptyMap());
+            redisService.deleteVersion(userName);
+            return true;
+        } catch (Exception e) {
+            log.info("deleteUserPicture Error : ", e);
+        }
+        return false;
+    }
+
 }

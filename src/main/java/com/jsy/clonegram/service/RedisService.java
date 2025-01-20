@@ -90,6 +90,20 @@ public class RedisService {
         }
     }
 
+    public void minusNotifications(String userName){
+        String notificationCount = redisTemplate.opsForValue().get(userName + "_notification");
+        if (notificationCount != null) {
+            int count = Integer.parseInt(notificationCount);
+            if (count <= 1) {
+                redisTemplate.opsForValue().set(userName + "_notification", "0");
+            }else {
+//                int result = Integer.parseInt(Objects.requireNonNull(redisTemplate.opsForValue().get(userName + "_notification")));
+                redisTemplate.opsForValue().set(userName + "_notification", String.valueOf(--count));
+            }
+        }
+
+    }
+
     public void deleteNotifications(String userName){
         try{
             redisTemplate.delete(userName + "_notification");

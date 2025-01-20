@@ -27,6 +27,8 @@ public class PostService {
     private final LikeyService likeyService;
     private final CommentService commentService;
     private final UserPictureService pictureService;
+    private final NotificationsService notificationsService;
+    private final RedisService redisService;
 
     @Transactional
     public Map<Long, String> getPicByPost(Post post){
@@ -67,7 +69,9 @@ public class PostService {
         if (req.equals("O")){
             jpaLikeyRepository.save(likey);
         }else {
+            Long id = likey.getId();
             jpaLikeyRepository.deleteByUserIdAndPostId(likey.getUserId(), likey.getPostId());
+            notificationsService.deleteNotificationById(id);
         }
         return likey.toString();
     }

@@ -158,6 +158,12 @@ public class NotificationsService {
         }
     }
 
+    @Transactional
+    public void deleteNotificationById(Long tid){
+        redisService.minusNotifications(userService.getUsernameOnSession());
+        jpaNotificationsRepository.deleteNotificationsByTid(tid);
+    }
+
 
     @Transactional
     // message: 0, likey: 1, comment: 2, follow: 3
@@ -177,11 +183,15 @@ public class NotificationsService {
                     }
                 case 1:
                     Likey likeyById = pageReturnService.getLikey(notifications.getTid());
-                    data.put("post", likeyById.getPostId());
                     try {
+                        data.put("post", likeyById.getPostId());
                         return objectMapper.writeValueAsString(data);
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
+
+                    } catch (Exception e) {
+//                        throw new RuntimeException(e);
+                        //TODO
+                        log.info("라이키 전달 문제");
+                        break;
                     }
                 case 2:
                     Comment commentById = pageReturnService.getComment(notifications.getTid());
@@ -198,6 +208,7 @@ public class NotificationsService {
                         return objectMapper.writeValueAsString(data);
                     }catch (JsonProcessingException e){
                         throw new RuntimeException(e);
+
                     }
                 default:
                     return null;

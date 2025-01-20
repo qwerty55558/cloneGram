@@ -19,7 +19,7 @@
     window.onload = function (){
         /*<![CDATA[*/
         let message = /*[[#{messages.msg.rejectPage}]]*/ 'Default Message';
-        let nextPage = [[${nextPage}]]
+        let nextPage = /*[[${nextPage}]]*/ '';
 
         alert(message);
         location.href = nextPage;

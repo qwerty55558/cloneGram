@@ -13,4 +13,9 @@ public class DebugContorller {
     public void hello(Locale locale) {
         log.info("Current Locale : {}", locale);
     }
+
+    @GetMapping("/test")
+    public String text(){
+        return "/test/index";
+    }
 }

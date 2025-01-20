@@ -5,6 +5,7 @@ import com.jsy.clonegram.dto.UserUpdateDto;
 import com.jsy.clonegram.generator.GenerateAuthCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class EmailService {
     private final RedisService redisService;
     private final UserService userService;
 
+    @Value("${spring.mail.username}")
+    private String from;
+
     public String sendAuthEmail(String to, Locale locale) {
         SimpleMailMessage msg = new SimpleMailMessage();
         String code = new GenerateAuthCode().executeGenerate();
@@ -29,7 +33,7 @@ public class EmailService {
 
         log.info("code = {}",code);
 
-        msg.setFrom("qwerty446688@naver.com");
+        msg.setFrom(from);
         msg.setTo(to);
         log.info("locale = {}",locale.getCountry());
 
