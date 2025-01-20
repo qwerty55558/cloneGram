@@ -40,6 +40,7 @@ Spring Boot를 관계형 데이터 베이스와 연동하여 프로젝트를 진
 11. [CloneGram 토이프로젝트 - 11](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-11)
 12. [CloneGram 토이프로젝트 - 12](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-12)
 13. [CloneGram 토이프로젝트 - 13](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-13)
+14. [CloneGram 토이프로젝트 - 14 (완)](https://velog.io/@qwerty55558/Clonegram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-14-%EC%99%84)
 
 ## ✅주요 기능
 ### **계정**
@@ -103,6 +104,16 @@ Spring Boot를 관계형 데이터 베이스와 연동하여 프로젝트를 진
 - properties 를 통한 국제화 적용
 - bootstrap 을 이용한 반응형 웹 페이지 구현
 - 라즈베리 OS, ubuntu 등등 리눅스 기반 호스팅으로 서버 구현
+
+## ERD 구조
+
+![스크린샷 2025-01-21 045150](https://github.com/user-attachments/assets/ab421980-3aea-40e2-8210-78e6ea59b03d)
+
+
+> [ERD Cloud 링크](https://www.erdcloud.com/d/3Pxfs5mR8ZKXuQvGM)
+
+
+
 
 ## 🔚엔드포인트 명세
 <table>
