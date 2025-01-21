@@ -27,7 +27,7 @@ Spring Boot를 관계형 데이터 베이스와 연동하여 프로젝트를 진
 
 
 ## 🗒️Record
-1. [CloneGram 토이프로젝트](https://velog.io/@qwerty55558/CloneGram-Project-cympbvsd) (Readme.md와 같은 내용)
+1. [CloneGram 토이프로젝트](https://velog.io/@qwerty55558/CloneGram-Project-cympbvsd)
 2. [CloneGram 토이프로젝트 - 02](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-02)
 3. [CloneGram 토이프로젝트 - 03](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-03)
 4. [CloneGram 토이프로젝트 - 04](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-04)
@@ -40,7 +40,7 @@ Spring Boot를 관계형 데이터 베이스와 연동하여 프로젝트를 진
 11. [CloneGram 토이프로젝트 - 11](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-11)
 12. [CloneGram 토이프로젝트 - 12](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-12)
 13. [CloneGram 토이프로젝트 - 13](https://velog.io/@qwerty55558/CloneGram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-13)
-14. [CloneGram 토이프로젝트 - 14 (완)](https://velog.io/@qwerty55558/Clonegram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-14-%EC%99%84)
+14. [CloneGram 토이프로젝트 - 14 (완)](https://velog.io/@qwerty55558/Clonegram-%ED%86%A0%EC%9D%B4%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-14-%EC%99%84) (시연, 구현, 디버그 등등 총 정리글의 링크입니다.)
 
 ## ✅주요 기능
 ### **계정**
